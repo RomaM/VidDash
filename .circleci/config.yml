@@ -1,0 +1,114 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+
+
+defaults: &defaults
+  working_directory: ~/circleci-build
+  docker:
+    - image: circleci/php:5.6-zts-jessie-node-browsers
+  environment:
+    PRODIP: 35.187.77.135 # Set host IP
+    STAGINGIP: 192.158.30.233 # set staging host IP
+    PROJECT: marketingvideos-dashboard.com # Set project domain name
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - save_cache:
+          paths:
+            - ~/circleci-build
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+  test:
+    <<: *defaults
+    steps:
+      - restore_cache:
+         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      # run tests!
+      - run: uname
+
+  deploy-master:
+    <<: *defaults
+    steps:
+      - restore_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run: echo "master-build"
+      - run:
+          command: |
+            mkdir ~/.ssh/
+            touch ~/.ssh/known_hosts
+            ssh-keyscan -p 11011 -H $PRODIP >> ~/.ssh/known_hosts
+      - run: ssh circleci@$PRODIP -p 11011 "sudo usermod -a -G apache circleci"
+      - run: ssh circleci@$PRODIP -p 11011 "sudo chown -R apache:apache /var/www"
+      - run: ssh circleci@$PRODIP -p 11011 "sudo -u apache mkdir -p /var/www/$PROJECT/{public_html,public_html_bac,logs}"
+      - run: ssh circleci@$PRODIP -p 11011 "sudo chmod g+rw -R /var/www/$PROJECT/{public_html,public_html_bac}"
+      - run: ssh circleci@$PRODIP -p 11011 "rsync -rlvz --chmod=ug=rwX /var/www/$PROJECT/public_html/ /var/www/$PROJECT/public_html_bac/"
+      - run:
+          command: |
+            rsync -rlvz --chmod=ug=rwX -e "ssh -p 11011" \
+            ~/circleci-build/ circleci@$PRODIP:/var/www/$PROJECT/public_html/ \
+            --include "vendor" \
+            --include "vendor/*" \
+            --exclude-from=".gitignore" \
+            --exclude ".gitignore" \
+            --exclude ".git" \
+            --exclude ".circleci"
+      - run:
+          command: |
+            ssh circleci@$PRODIP -p 11011 "sudo chown -R apache:apache /var/www"
+  deploy-staging:
+    <<: *defaults
+    steps:
+      - restore_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run: echo "master-build"
+      - run:
+          command: |
+            mkdir ~/.ssh/
+            touch ~/.ssh/known_hosts
+            ssh-keyscan -p 11011 -H $STAGINGIP >> ~/.ssh/known_hosts
+      - run: ssh circleci@$STAGINGIP -p 11011 "sudo usermod -a -G apache circleci"
+      - run: ssh circleci@$STAGINGIP -p 11011 "sudo chown -R apache:apache /var/www"
+      - run: ssh circleci@$STAGINGIP -p 11011 "sudo -u apache mkdir -p /var/www/staging.$PROJECT/{public_html,logs}"
+      - run: ssh circleci@$STAGINGIP -p 11011 "sudo chmod g+rw -R /var/www/staging.$PROJECT/public_html"
+      - run:
+          command: |
+            rsync -rlvz --chmod=ug=rwX -e "ssh -p 11011" \
+            ~/circleci-build/ circleci@$STAGINGIP:/var/www/staging.$PROJECT/public_html/ \
+            --include "vendor" \
+            --include "vendor/*" \
+            --exclude-from=".gitignore" \
+            --exclude ".gitignore" \
+            --exclude ".git" \
+            --exclude ".circleci"
+      - run:
+          command: |
+            ssh circleci@$STAGINGIP -p 11011 "sudo chown -R apache:apache /var/www"
+workflows:
+  version: 2
+
+  build-n-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - staging
+      - deploy-master:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: staging
