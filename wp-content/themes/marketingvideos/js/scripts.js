@@ -79,7 +79,10 @@ class VideoDashboard {
       .then((response) => {
         return response.json()
       })
-      .then((data) => {this.storeTokenToStorage(data.token);})
+      .then((data) => {
+        this.storeTokenToStorage(data.token);
+        console.log(data.token);
+      })
       .catch((error) => {console.log(error)});
   }
 
