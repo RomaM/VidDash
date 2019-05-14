@@ -17,7 +17,10 @@ class VideoDashboard {
       .then((response) => {
         return response.json()
       })
-      .then((data) => {console.log('DATA: ',data);this.render(data);})
+      .then((data) => {
+        console.log('DATA: ',data);
+        this.render(data);
+      })
       .catch((error) => {console.log(error)})
   }
 
@@ -68,8 +71,8 @@ class VideoDashboard {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        username: 'Videouser',
-        password: 'H2k9CR1MiOcJHQox$cNCkz)P'
+        username: 'admin',
+        password: 'm(^l3F#7X@v7U7hm3Q'
       })
     };
     fetch(`${this.hostname}/wp-json/jwt-auth/v1/token`, params)
