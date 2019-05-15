@@ -2,7 +2,7 @@ class VideoDashboard {
   constructor(dataType, wrapper) {
     this.dataType = dataType;
     this.wrapper = wrapper;
-    this.getJWT();
+    /*this.getJWT();*/
   }
 
   init() {
@@ -24,7 +24,7 @@ class VideoDashboard {
       .catch((error) => {console.log(error)})
   }
 
-  setData() {
+  /*setData() {
     const token = this.getTokenFromStorage();
     const exampleJson = JSON.stringify({
       events: 'play',
@@ -54,17 +54,17 @@ class VideoDashboard {
       })
       .then((data) => {console.log(data)})
       .catch((error) => {console.log(error)});
-  }
+  }*/
 
-  storeTokenToStorage(token) {
+  /*storeTokenToStorage(token) {
     localStorage.setItem('token', JSON.stringify(token))
   }
 
   getTokenFromStorage() {
     return JSON.parse(localStorage.getItem('token'));
-  }
+  }*/
 
-  getJWT() {
+  /*getJWT() {
     const params = {
       method: "POST",
       headers: {
@@ -84,7 +84,7 @@ class VideoDashboard {
         console.log(data.token);
       })
       .catch((error) => {console.log(error)});
-  }
+  }*/
 
   isJson(str) {
     try {
@@ -126,7 +126,8 @@ class VideoDashboard {
         <pre class="element_${element.id}">${element.content._raw}</pre>
       `;
     if (this.isJson(element.content._raw)) {
-      let dataObject = JSON.parse(element.content._raw);
+      let dataObject = JSON.parse(element.content._raw).length > 0 ? JSON.parse(element.content._raw) : '';
+
       console.log(dataObject);
 
       if (Array.isArray(dataObject)) {
