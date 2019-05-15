@@ -69,3 +69,4 @@ Thumbs.db
 /excluded.ini
 /vendor/*
 .htaccess
+node_modules

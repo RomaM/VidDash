@@ -1,0 +1,13 @@
+.header{
+  background: rgba(255,255,255,0.6);
+  position: fixed;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.11), 0 3px 6px rgba(0,0,0,0.12);
+  &__filter{
+    display: flex;
+    padding: 7px;
+    &-select{
+      margin-right: 10px;
+    }
+  }
+}
