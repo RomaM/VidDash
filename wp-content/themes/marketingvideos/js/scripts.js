@@ -34,35 +34,26 @@ class VideoDashboard {
 
   render(data) {
     const templateWrapper = document.createElement("div");
-    const obj = {
-      events: [],
-      rawEvents: []
-    };
 
-    if (Array.isArray(data)) {
       data.forEach((element) => {
         this.renderTemplate(templateWrapper, element);
-        if(this.isJson(element.content._raw)){
-          obj.events.push(JSON.parse(element.content._raw));
-        }
+        console.log(element['meta-field'])
       });
-    } else {
-      this.renderTemplate(templateWrapper, data)
-    }
 
-    obj.events.map((e) => {
-      obj.rawEvents.push(e)
-    });
 
     wrapper.appendChild(templateWrapper);
   }
 
   renderTemplate(wrapper, element) {
     let DOM = `
-        <pre class="element_${element.id}">${element.content._raw}</pre>
+        <div class="element__box">
+            <p class="element__title">${element.content._raw}</p>
+            <pre class="element_${element.id}">${element['meta-field']}</pre>
+        </div>
       `;
-    if (this.isJson(element.content._raw)) {
-      let dataObject = JSON.parse(element.content._raw).length > 0 ? JSON.parse(element.content._raw) : '';
+
+    /*if (this.isJson(element.content['meta-field'])) {
+      let dataObject = JSON.parse(element.content['meta-field']).length > 0 ? JSON.parse(element.content['meta-field']) : '';
 
       console.log(dataObject);
 
@@ -70,9 +61,9 @@ class VideoDashboard {
         dataObject.map((e) => {
           console.log("Separate object", e);
         });
-      }
+      }*/
       wrapper.insertAdjacentHTML('afterbegin', DOM);
-    }
+    //}
   }
 
 }
