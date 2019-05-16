@@ -91,22 +91,30 @@ function page_assets_includes() {
     }
 }
 
-/*add_action( 'rest_api_init', 'add_custom_fields' );
-function add_custom_fields() {
-    register_rest_field(
-        'post',
-        'video_events', //New Field Name in JSON RESPONSEs
-        array(
-            'get_callback'    => 'get_custom_fields', // custom function name
-            'update_callback' => null,
-            'schema'          => null,
+/*Logic for adding custom meta field*/
+add_action( 'rest_api_init', 'create_api_posts_meta_field' );
+
+function create_api_posts_meta_field() {
+    register_rest_field( 'post', 'meta-field', array(
+            'get_callback' => 'get_post_meta_for_api',
+            'update_callback' => 'update_post_meta_for_api',
+            'schema' => null,
         )
     );
-}*/
-function get_custom_fields( $object ) {
-    return get_post_meta( $object['id'] );
 }
 
+function get_post_meta_for_api( $object, $field_name, $request ) {
+    $post_id = $object['id'];
+    $meta = get_post_meta( $post_id, 'meta-field' );
+    return $meta;
+}
+
+function update_post_meta_for_api( $value, $object, $field_name ) {
+    return update_post_meta( $object->ID, 'meta-field' ,$value );
+}
+/*end meta field*/
+
+/*adding custom field for reading raw content data*/
 add_action( 'rest_api_init', function () {
     register_rest_field(
         'post',
@@ -126,11 +134,22 @@ function do_raw_shortcodes( $object, $field_name, $request ){
     $output['_raw'] = $post->post_content;
     return $output;
 }
+/*end*/
 
 function add_cors_http_header(){
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: Authorization, Content-Type");
 }
+
+/*increasing max posts per page limit*/
+add_filter( 'rest_post_collection_params', 'big_json_change_post_per_page', 10, 1 );
+function big_json_change_post_per_page( $params ) {
+    if ( isset( $params['per_page'] ) ) {
+        $params['per_page']['maximum'] = 2000;
+    }
+    return $params;
+}
+/*end*/
 
 add_action('init','add_cors_http_header');
 add_filter('flush_rewrite_rules_hard','__return_false');

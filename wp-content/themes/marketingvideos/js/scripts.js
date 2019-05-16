@@ -2,18 +2,16 @@ class VideoDashboard {
   constructor(dataType, wrapper) {
     this.dataType = dataType;
     this.wrapper = wrapper;
-    /*this.getJWT();*/
   }
 
   init() {
     this.getData();
-    /*this.setData();*/
   }
 
   hostname = window.location.protocol + '//' + window.location.hostname;
 
   getData() {
-    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/?per_page=100`)
+    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/?per_page=2000`)
       .then((response) => {
         return response.json()
       })
@@ -23,68 +21,6 @@ class VideoDashboard {
       })
       .catch((error) => {console.log(error)})
   }
-
-  /*setData() {
-    const token = this.getTokenFromStorage();
-    const exampleJson = JSON.stringify({
-      events: 'play',
-      type: 'video',
-      timestamp: 2.23
-    });
-    const requestBody = {
-      title: "VideoFromJS",
-      content: {
-        raw: exampleJson
-      },
-      status: "publish"
-    };
-
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token
-      },
-      body: JSON.stringify(requestBody)
-    };
-
-    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/`, params)
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {console.log(data)})
-      .catch((error) => {console.log(error)});
-  }*/
-
-  /*storeTokenToStorage(token) {
-    localStorage.setItem('token', JSON.stringify(token))
-  }
-
-  getTokenFromStorage() {
-    return JSON.parse(localStorage.getItem('token'));
-  }*/
-
-  /*getJWT() {
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        username: 'admin',
-        password: 'm(^l3F#7X@v7U7hm3Q'
-      })
-    };
-    fetch(`${this.hostname}/wp-json/jwt-auth/v1/token`, params)
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        this.storeTokenToStorage(data.token);
-        console.log(data.token);
-      })
-      .catch((error) => {console.log(error)});
-  }*/
 
   isJson(str) {
     try {
