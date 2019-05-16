@@ -91,7 +91,74 @@ function page_assets_includes() {
     }
 }
 
-/*Logic for adding custom meta field*/
+/*add_action( 'rest_api_init', 'create_api_posts_meta_field' );
+
+function create_api_posts_meta_field() {
+
+    // register_rest_field ( 'name-of-post-type', 'name-of-field-to-return', array-of-callbacks-and-schema() )
+    register_rest_field( 'video', 'userdata', array(
+            'get_callback' => 'get_post_meta_for_api',
+            'update_callback'   => 'update_post_meta_for_exp',
+            'schema' => null,
+        )
+    );
+}
+
+function get_post_meta_for_api( $object ) {
+    //get the id of the post object array
+    $post_id = $object['id'];
+    $meta = get_post_meta( $post_id );
+    if ( isset( $meta['userdata' ] ) && isset( $meta['userdata' ][0] ) ) {
+        //return the post meta
+        return $meta['userdata' ][0];
+    }
+    // meta not found
+    return false;
+}
+
+function update_post_meta_for_exp($object, $meta_value ) {
+    $havemetafield  = get_post_meta($object['id'], 'experience', false);
+
+    if ($havemetafield) {
+        $ret = update_post_meta($object['id'], 'subtitle', $meta_value );
+    } else {
+        $ret = add_post_meta( $object['id'], 'subtitle', $meta_value ,true );
+    }
+    return true;
+}*/
+
+
+
+/*logic for adding custom meta field*/
+/*add_action( 'rest_api_init', 'custom_post' );
+
+function custom_post() {
+    register_rest_field( 'post', 'content', array(
+            'get_callback' => 'get_custom_post',
+            'update_callback' => 'update_custom_post',
+            'schema' => null,
+        )
+    );
+}
+
+function get_custom_post( $object, $field_name, $request ) {
+    $post_id = $object['id'];
+    $content = get_post( $post_id, 'content' );
+    return $content;
+}
+
+function update_custom_post( $value, $object, $field_name ) {
+    return add_post_meta( $object->ID, 'content' ,$value );
+}*/
+/*end meta field*/
+
+
+ 
+
+
+
+
+/*logic for adding custom meta field*/
 add_action( 'rest_api_init', 'create_api_posts_meta_field' );
 
 function create_api_posts_meta_field() {
@@ -110,7 +177,8 @@ function get_post_meta_for_api( $object, $field_name, $request ) {
 }
 
 function update_post_meta_for_api( $value, $object, $field_name ) {
-    return update_post_meta( $object->ID, 'meta-field' ,$value );
+
+    return add_post_meta( $object->ID, 'meta-field' ,$value );
 }
 /*end meta field*/
 
