@@ -40,29 +40,20 @@ class VideoDashboard {
         console.log(element['meta-field'])
       });
 
-
     wrapper.appendChild(templateWrapper);
   }
 
   renderTemplate(wrapper, element) {
+    const metaArray = element['meta-field'];
+    console.log(metaArray);
+
     let DOM = `
         <div class="element__box">
             <p class="element__title">${element.content._raw}</p>
-            <pre class="element_${element.id}">${element['meta-field']}</pre>
+            <pre class="element_${element.id}">${metaArray}</pre>
         </div>
       `;
-
-    /*if (this.isJson(element.content['meta-field'])) {
-      let dataObject = JSON.parse(element.content['meta-field']).length > 0 ? JSON.parse(element.content['meta-field']) : '';
-
-      console.log(dataObject);
-
-      if (Array.isArray(dataObject)) {
-        dataObject.map((e) => {
-          console.log("Separate object", e);
-        });
-      }*/
-      wrapper.insertAdjacentHTML('afterbegin', DOM);
+      //wrapper.insertAdjacentHTML('afterbegin', DOM);
     //}
   }
 

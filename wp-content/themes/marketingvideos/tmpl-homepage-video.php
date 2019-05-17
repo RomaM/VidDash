@@ -77,6 +77,25 @@
 
                 <h1 class="content__title">POSTS:</h1>
                 <div id="wrapper"></div>
+
+                <?php
+                    $posts = get_posts();
+                    foreach ($posts as $post) {
+                       $id = get_the_ID();
+                       $title = the_title($before = '', $after = '', false);
+                       $custom_fields = get_post_custom($id);
+                       $content = $custom_fields['meta-field'];
+
+                       echo '<div class="element__box"><p class="element__title">'.$title.'<p>';
+
+                           foreach ( $content as $key => $value ) {
+                                echo "<pre>" .$value. "</pre>";
+                            }
+
+                            echo '</div>';
+                    }
+                ?>
+
             </div>
         </main>
 
