@@ -2,18 +2,16 @@ class VideoDashboard {
   constructor(dataType, wrapper) {
     this.dataType = dataType;
     this.wrapper = wrapper;
-    /*this.getJWT();*/
   }
 
   init() {
     this.getData();
-    /*this.setData();*/
   }
 
   hostname = window.location.protocol + '//' + window.location.hostname;
 
   getData() {
-    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/?per_page=100`)
+    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/?per_page=2000`)
       .then((response) => {
         return response.json()
       })
@@ -23,68 +21,6 @@ class VideoDashboard {
       })
       .catch((error) => {console.log(error)})
   }
-
-  /*setData() {
-    const token = this.getTokenFromStorage();
-    const exampleJson = JSON.stringify({
-      events: 'play',
-      type: 'video',
-      timestamp: 2.23
-    });
-    const requestBody = {
-      title: "VideoFromJS",
-      content: {
-        raw: exampleJson
-      },
-      status: "publish"
-    };
-
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token
-      },
-      body: JSON.stringify(requestBody)
-    };
-
-    fetch(`${this.hostname}/wp-json/wp/v2/${this.dataType}/`, params)
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {console.log(data)})
-      .catch((error) => {console.log(error)});
-  }*/
-
-  /*storeTokenToStorage(token) {
-    localStorage.setItem('token', JSON.stringify(token))
-  }
-
-  getTokenFromStorage() {
-    return JSON.parse(localStorage.getItem('token'));
-  }*/
-
-  /*getJWT() {
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        username: 'admin',
-        password: 'm(^l3F#7X@v7U7hm3Q'
-      })
-    };
-    fetch(`${this.hostname}/wp-json/jwt-auth/v1/token`, params)
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        this.storeTokenToStorage(data.token);
-        console.log(data.token);
-      })
-      .catch((error) => {console.log(error)});
-  }*/
 
   isJson(str) {
     try {
@@ -98,45 +34,27 @@ class VideoDashboard {
 
   render(data) {
     const templateWrapper = document.createElement("div");
-    const obj = {
-      events: [],
-      rawEvents: []
-    };
 
-    if (Array.isArray(data)) {
       data.forEach((element) => {
         this.renderTemplate(templateWrapper, element);
-        if(this.isJson(element.content._raw)){
-          obj.events.push(JSON.parse(element.content._raw));
-        }
+        console.log(element['meta-field'])
       });
-    } else {
-      this.renderTemplate(templateWrapper, data)
-    }
-
-    obj.events.map((e) => {
-      obj.rawEvents.push(e)
-    });
 
     wrapper.appendChild(templateWrapper);
   }
 
   renderTemplate(wrapper, element) {
+    const metaArray = element['meta-field'];
+    console.log(metaArray);
+
     let DOM = `
-        <pre class="element_${element.id}">${element.content._raw}</pre>
+        <div class="element__box">
+            <p class="element__title">${element.content._raw}</p>
+            <pre class="element_${element.id}">${metaArray}</pre>
+        </div>
       `;
-    if (this.isJson(element.content._raw)) {
-      let dataObject = JSON.parse(element.content._raw).length > 0 ? JSON.parse(element.content._raw) : '';
-
-      console.log(dataObject);
-
-      if (Array.isArray(dataObject)) {
-        dataObject.map((e) => {
-          console.log("Separate object", e);
-        });
-      }
-      wrapper.insertAdjacentHTML('afterbegin', DOM);
-    }
+      //wrapper.insertAdjacentHTML('afterbegin', DOM);
+    //}
   }
 
 }
