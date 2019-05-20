@@ -5,6 +5,8 @@
         wp_safe_redirect('/wp-admin');
         exit;
     }*/
+
+$videoPages = array();
 ?>
 
 <!DOCTYPE html>
@@ -35,20 +37,18 @@
                 <div class="row">
                     <div class="header__filter">
                         <select class="header__filter-select form-control">
-                            <option>Default select</option>
+                            <option>Page name</option>
                         </select>
                         <select class="header__filter-select form-control">
-                            <option>Default select</option>
+                            <option>Video name</option>
                         </select>
                         <select class="header__filter-select form-control">
-                            <option>Default select</option>
+                            <option>Date from</option>
                         </select>
                         <select class="header__filter-select form-control">
-                            <option>Default select</option>
+                            <option>Date to</option>
                         </select>
-                        <select class="header__filter-select form-control">
-                            <option>Default select</option>
-                        </select>
+
 
                         <button class="btn btn-primary">
                             Apply
@@ -80,32 +80,100 @@
 
                 <?php
                     $posts = get_posts();
-                    foreach ($posts as $post) {
-                       $id = get_the_ID();
-                       $title = the_title($before = '', $after = '', false);
-                       $custom_fields = get_post_custom($id);
-                       $content = $custom_fields['meta-field'];
+                    foreach ($posts as $i => $post) {
+                        $singlePage = (object)[];
 
-                       echo '<div class="element__box"><p class="element__title">'.$title.'<p>';
+                        $fullTitle = explode('-videonameis-', $post->post_title);
+                        $pageName = $fullTitle[0];
+                        $videoName = $fullTitle[1];
 
-                           foreach ( $content as $key => $value ) {
-                                echo "<pre>" .$value. "</pre>";
+                        $singlePage->name = $pageName;
+                        $singlePage->videoName = $videoName;
+
+                        $singlePage->duration = 224;
+
+                        $singlePage->date = [];
+                        $dateIndex = 0;
+                        $singlePage->date[$dateIndex] = (object)[];
+
+                        $postId = $post->ID;
+                        $custom_fields = get_post_custom($postId, '', false);
+                        $content = $custom_fields['meta-field'];
+
+                        $currentDate = '';
+                        foreach ( $content as $key => $value ) {
+                            $userEventID = $value['uid'];
+                            $userEventDate = $value['date'];
+                            $userEventName = $value['name'];
+                            $userEventTimeStamp = $value['timestamp'];
+
+                            if (empty($singlePage->date)) {
+                                $currentDate = $userEventDate;
+                                $singlePage->date[$userEventDate]->uids = [];
+                                $singlePage->date[$userEventDate]->uids[$dateIndex]->id[$userEventID];
+
+
+                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events = [];
+                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['name'] = $userEventName;
+                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
+
+                            } else if ($currentDate == $userEventDate) {
+                                $dateIndex++;
+                                $singlePage->uids[$dateIndex]->id = (object)['name' => $userEventID];
+                                $singlePage->uids[$dateIndex]->events = [];
+                                $singlePage->uids[$dateIndex]->events['name'] = $userEventName;
+                                $singlePage->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
+
+                            } else if ($currentDate != $userEventDate) {
+                                $dateIndex++;
                             }
 
-                            echo '</div>';
+
+
+                            $singlePage->date[$dateIndex]->uID = [];
+                            array_push($singlePage->date[$dateIndex]->uID, $userID);
+                        }
+
+                        var_dump($singlePage);
+
+                        $title = $post->post_title;
+                        $custom_fields = get_post_custom($id, '', false);
+                        $content = $custom_fields['meta-field'];
+
+                        array_push($videoPages, $singlePage);
+
+                        echo '<div class="element__box"><p class="element__title">'.$title.'<p>';
+                        foreach ( $content as $key => $value ) {
+                           $pageData = json_decode($value);
+
+                           //$globalData -> date[$key] = $pageData['date'];
+                           //$globalData -> duration[$key] = $pageData['duration'];
+
+                           echo "<pre>" .
+                               $value
+                               . "</pre>";
+
+
+                        }
+                        echo '</div>';
+                        var_dump($pageData);
                     }
                 ?>
 
             </div>
         </main>
-
-            <script  type="text/javascript">
+            <?php echo $pageData;?>
+            <script type="text/javascript">
+                var globalData = <?php echo $pageData?>;
+                console.log('DATA: ', globalData);
+            </script>
+            <!--<script  type="text/javascript">
               const dashboard = new VideoDashboard(
                 'posts',
                 document.querySelector('#wrapper')
               );
               dashboard.init();
-            </script>
+            </script>-->
         <?php
             wp_footer();
         ?>
