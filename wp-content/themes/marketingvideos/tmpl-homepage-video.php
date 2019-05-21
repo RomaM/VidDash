@@ -48,8 +48,6 @@ $videoPages = array();
                         <select class="header__filter-select form-control">
                             <option>Date to</option>
                         </select>
-
-
                         <button class="btn btn-primary">
                             Apply
                         </button>
@@ -59,6 +57,7 @@ $videoPages = array();
         </header>
 
         <main class="content">
+            <p id="title" class="content__title">Page</p>
             <div class="container">
                 <div class="chart">
                     <div class="chart__box">
@@ -82,65 +81,154 @@ $videoPages = array();
                     $posts = get_posts();
                     foreach ($posts as $i => $post) {
                         $singlePage = (object)[];
-
                         $fullTitle = explode('-videonameis-', $post->post_title);
                         $pageName = $fullTitle[0];
                         $videoName = $fullTitle[1];
 
                         $singlePage->name = $pageName;
                         $singlePage->videoName = $videoName;
-
                         $singlePage->duration = 224;
 
-                        $singlePage->date = [];
                         $dateIndex = 0;
                         $singlePage->date[$dateIndex] = (object)[];
 
                         $postId = $post->ID;
                         $custom_fields = get_post_custom($postId, '', false);
                         $content = $custom_fields['meta-field'];
-
                         $currentDate = '';
+
                         foreach ( $content as $key => $value ) {
-                            $userEventID = $value['uid'];
-                            $userEventDate = $value['date'];
-                            $userEventName = $value['name'];
-                            $userEventTimeStamp = $value['timestamp'];
+                            $decodedValue = json_decode($value);
 
-                            if (empty($singlePage->date)) {
-                                $currentDate = $userEventDate;
-                                $singlePage->date[$userEventDate]->uids = [];
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->id[$userEventID];
+                            /*foreach ($obj as $objKey => $singlePage->date[$key]->device){
+                                var_dump($obj);
+                            }*/
 
-
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events = [];
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['name'] = $userEventName;
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
-
-                            } else if ($currentDate == $userEventDate) {
-                                $dateIndex++;
-                                $singlePage->uids[$dateIndex]->id = (object)['name' => $userEventID];
-                                $singlePage->uids[$dateIndex]->events = [];
-                                $singlePage->uids[$dateIndex]->events['name'] = $userEventName;
-                                $singlePage->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
-
-                            } else if ($currentDate != $userEventDate) {
-                                $dateIndex++;
-                            }
-
-
-
-                            $singlePage->date[$dateIndex]->uID = [];
-                            array_push($singlePage->date[$dateIndex]->uID, $userID);
+                            /*$singlePage->date[$dateIndex]->uID = [];*/
+                            /*array_push($singlePage->date[$dateIndex]->uID, $userID);*/
                         }
 
-                        var_dump($singlePage);
+                        //var_dump($singlePage);
+
+                        $test = [
+                            'name' => 'the-tesler-wobb',
+                            'date' => [
+                                (object)[
+                                    'dmy' => '20.5.2019',
+                                    'uid' => [
+                                        (object) [
+                                            'id' => '35e20e0c-4cbd-49b8-b033-1f4052816518',
+                                            'events' => [
+                                                (object)[
+                                                    'session' => 2,
+                                                    'date' => '20.02.2019',
+                                                    'device' => '{"name":"Desktop","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'play',
+                                                    'videoTime' => 2.36,
+                                                    'timestamp' => 3490.544
+                                                ],
+                                                (object)[
+                                                    'session' => 2,
+                                                    'date' => '20.02.2019',
+                                                    'device' => '{"name":"Desktop","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'stop',
+                                                    'videoTime' => 5.36,
+                                                    'timestamp' => 3490.544
+                                                ]
+                                            ]
+                                        ],
+
+                                    ]
+                                ],
+                                (object)[
+                                    'dmy' => '21.5.2019',
+                                    'uid' => [
+                                        (object) [
+                                            'id' => 'xxxx20e0c-4cbd-49b8-b033-1f4052816518',
+                                            'events' => [
+                                                (object)[
+                                                    'session' => 3,
+                                                    'date' => '21.02.2019',
+                                                    'device' => '{"name":"Mobile","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'play',
+                                                    'videoTime' => 1.33,
+                                                    'timestamp' => 146.544
+                                                ]
+                                            ]
+                                        ],
+
+                                    ]
+                                ],
+                                (object)[
+                                    'dmy' => '21.5.2019',
+                                    'uid' => [
+                                        (object) [
+                                            'id' => '888880e0c-4cbd-49b8-b033-1f4052816518',
+                                            'events' => [
+                                                (object)[
+                                                    'session' => 3,
+                                                    'date' => '21.02.2019',
+                                                    'device' => '{"name":"Mobile","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'play',
+                                                    'videoTime' => 4.11,
+                                                    'timestamp' => 146.544
+                                                ]
+                                            ]
+                                        ],
+
+                                    ]
+                                ],
+                                (object)[
+                                    'dmy' => '21.5.2019',
+                                    'uid' => [
+                                        (object) [
+                                            'id' => '888820e0c-4cbd-49b8-b033-1f4052816518',
+                                            'events' => [
+                                                (object)[
+                                                    'session' => 3,
+                                                    'date' => '21.02.2019',
+                                                    'device' => '{"name":"Mobile","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'play',
+                                                    'videoTime' => 8.06,
+                                                    'timestamp' => 146.544
+                                                ]
+                                            ]
+                                        ],
+
+                                    ]
+                                ],
+                                (object)[
+                                    'dmy' => '21.5.2019',
+                                    'uid' => [
+                                        (object) [
+                                            'id' => '666620e0c-4cbd-49b8-b033-1f4052816518',
+                                            'events' => [
+                                                (object)[
+                                                    'session' => 3,
+                                                    'date' => '21.02.2019',
+                                                    'device' => '{"name":"Mobile","browser":"Chrome","orientation":"landscape"}',
+                                                    'event' => 'play',
+                                                    'videoTime' => 9.22,
+                                                    'timestamp' => 146.544
+                                                ]
+                                            ]
+                                        ],
+
+                                    ]
+                                ],
+
+                            ]
+                        ];
+
+                        $test = json_encode($test);
+
+                        var_dump($test);
 
                         $title = $post->post_title;
                         $custom_fields = get_post_custom($id, '', false);
                         $content = $custom_fields['meta-field'];
 
-                        array_push($videoPages, $singlePage);
+                        /*array_push($videoPages, $singlePage);*/
 
                         echo '<div class="element__box"><p class="element__title">'.$title.'<p>';
                         foreach ( $content as $key => $value ) {
@@ -156,24 +244,19 @@ $videoPages = array();
 
                         }
                         echo '</div>';
-                        var_dump($pageData);
+                        //var_dump(json_encode($pageData));
                     }
                 ?>
 
             </div>
         </main>
-            <?php echo $pageData;?>
-            <script type="text/javascript">
-                var globalData = <?php echo $pageData?>;
-                console.log('DATA: ', globalData);
-            </script>
-            <!--<script  type="text/javascript">
-              const dashboard = new VideoDashboard(
-                'posts',
-                document.querySelector('#wrapper')
+            <script  type="text/javascript">
+              const globalData = <?php echo $test?>;
+              const charts = new ChartData(
+                globalData
               );
-              dashboard.init();
-            </script>-->
+              charts.init();
+            </script>
         <?php
             wp_footer();
         ?>
