@@ -5,8 +5,6 @@
         wp_safe_redirect('/wp-admin');
         exit;
     }*/
-
-$videoPages = array();
 ?>
 
 <!DOCTYPE html>
@@ -79,101 +77,142 @@ $videoPages = array();
                 <div id="wrapper"></div>
 
                 <?php
-                    $posts = get_posts();
+                		$videoPages = array(); // Main global array with data
+
+                    $posts = get_posts(array('category_name' => 'videoEvents')); // All posts from VideoEvents
+
                     foreach ($posts as $i => $post) {
+                    		// General details about post
+                      	$fullContent = json_decode($post->post_content);
+                        $pageDomain = $fullContent->domain;
+                        $pageName = $fullContent->pageName;
+                        $videoName = $fullContent->videoName;
+                        $videoDuration = $fullContent->videoDuration;
+
+                        // Creating a page for each unique page with video
                         $singlePage = (object)[];
-
-                        $fullTitle = explode('-videonameis-', $post->post_title);
-                        $pageName = $fullTitle[0];
-                        $videoName = $fullTitle[1];
-
-                        $singlePage->name = $pageName;
+                        $singlePage->pageName = $pageName;
                         $singlePage->videoName = $videoName;
-
-                        $singlePage->duration = 224;
-
+                        $singlePage->duration = $videoDuration;
                         $singlePage->date = [];
-                        $dateIndex = 0;
-                        $singlePage->date[$dateIndex] = (object)[];
 
+                        // Getting metadata about each post
                         $postId = $post->ID;
                         $custom_fields = get_post_custom($postId, '', false);
                         $content = $custom_fields['meta-field'];
 
-                        $currentDate = '';
-                        foreach ( $content as $key => $value ) {
-                            $userEventID = $value['uid'];
-                            $userEventDate = $value['date'];
-                            $userEventName = $value['name'];
-                            $userEventTimeStamp = $value['timestamp'];
 
-                            if (empty($singlePage->date)) {
-                                $currentDate = $userEventDate;
-                                $singlePage->date[$userEventDate]->uids = [];
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->id[$userEventID];
+												if (array_key_exists($pageDomain . $pageName, $videoPages)) {
+
+                            $currentDate = '';
+                            foreach ( $content as $key => $value ) {
+                                $decodedValues = json_decode($value);
+
+                                foreach ($decodedValues as $decodedValue) {
+                                    $userID = $decodedValue->uid;
+                                    $userSession = $decodedValue->session;
+                                    $userDate = $decodedValue->date;
+                                    $userDevice = $decodedValue->device;
+                                    $userEvent = $decodedValue->event;
+                                    $userVideoTime = $decodedValue->videotime;
+                                    $userTimestamp = $decodedValue->timestamp;
+
+                                    if (array_key_exists($userDate, $singlePage->date)) {
+
+                                        if (array_key_exists($userID, $singlePage->date[$userDate]->uids)) {
+                                            $eventInfo = (object)[
+                                                'session' => $userSession,
+                                                'date' => $userDate,
+                                                'device' => json_encode($userDevice),
+                                                'event' => $userEvent,
+                                                'videoTime' => $userVideoTime,
+                                                'timestamp' => $userTimestamp,
+                                            ];
+
+                                        	array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
+
+																				}
+																				else {
+                                            $eventInfo = (object)[
+                                                'session' => $userSession,
+                                                'date' => $userDate,
+                                                'device' => json_encode($userDevice),
+                                                'event' => $userEvent,
+                                                'videoTime' => $userVideoTime,
+                                                'timestamp' => $userTimestamp,
+                                            ];
+
+                                            $singlePage->date[$userDate]->uids[$userID] = (object)[
+                                                'events' => [$eventInfo]
+                                            ];
+
+																				}
+
+                                    } else {
+                                        $currentDate = $userDate;
+                                        $eventInfo = (object)[
+                                            'session' => $userSession,
+                                            'date' => $userDate,
+                                            'device' => json_encode($userDevice),
+                                            'event' => $userEvent,
+                                            'videoTime' => $userVideoTime,
+                                            'timestamp' => $userTimestamp,
+                                        ];
+
+                                        $singlePage->date = [
+                                            $userDate => (object)[
+                                                'uids' => [
+                                                    $userID => (object)[
+                                                        'events' => [$eventInfo]
+                                                    ]
+                                                ]
+                                            ]
+                                        ];
+																		}
+                                }
 
 
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events = [];
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['name'] = $userEventName;
-                                $singlePage->date[$userEventDate]->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
 
-                            } else if ($currentDate == $userEventDate) {
-                                $dateIndex++;
-                                $singlePage->uids[$dateIndex]->id = (object)['name' => $userEventID];
-                                $singlePage->uids[$dateIndex]->events = [];
-                                $singlePage->uids[$dateIndex]->events['name'] = $userEventName;
-                                $singlePage->uids[$dateIndex]->events['timestamp'] = $userEventTimeStamp;
-
-                            } else if ($currentDate != $userEventDate) {
-                                $dateIndex++;
                             }
 
+												} else {
+                            foreach ( $content as $key => $value ) {
+                                $decodedValues = json_decode($value);
 
+                                foreach ($decodedValues as $decodedValue) {
+                                    $userID = $decodedValue->uid;
+                                    $userSession = $decodedValue->session;
+                                    $userDate = $decodedValue->date;
+                                    $userDevice = $decodedValue->device;
+                                    $userEvent = $decodedValue->event;
+                                    $userVideoTime = $decodedValue->videotime;
+                                    $userTimestamp = $decodedValue->timestamp;
 
-                            $singlePage->date[$dateIndex]->uID = [];
-                            array_push($singlePage->date[$dateIndex]->uID, $userID);
-                        }
+                                    $eventInfo = (object)[
+                                        'session' => $userSession,
+                                        'date' => $userDate,
+                                        'device' => json_encode($userDevice),
+                                        'event' => $userEvent,
+                                        'videoTime' => $userVideoTime,
+                                        'timestamp' => $userTimestamp,
+                                    ];
 
-                        var_dump($singlePage);
+                                    $singlePage->date[$userDate]->uids[$userID]->events = [];
 
-                        $title = $post->post_title;
-                        $custom_fields = get_post_custom($id, '', false);
-                        $content = $custom_fields['meta-field'];
+                                    array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
+                                }
+                            }
 
-                        array_push($videoPages, $singlePage);
+                            $videoPages[$pageDomain . $pageName] = $singlePage;
+												}
 
-                        echo '<div class="element__box"><p class="element__title">'.$title.'<p>';
-                        foreach ( $content as $key => $value ) {
-                           $pageData = json_decode($value);
-
-                           //$globalData -> date[$key] = $pageData['date'];
-                           //$globalData -> duration[$key] = $pageData['duration'];
-
-                           echo "<pre>" .
-                               $value
-                               . "</pre>";
-
-
-                        }
-                        echo '</div>';
-                        var_dump($pageData);
                     }
+
+                		var_dump($videoPages);
                 ?>
 
             </div>
         </main>
-            <?php echo $pageData;?>
-            <script type="text/javascript">
-                var globalData = <?php echo $pageData?>;
-                console.log('DATA: ', globalData);
-            </script>
-            <!--<script  type="text/javascript">
-              const dashboard = new VideoDashboard(
-                'posts',
-                document.querySelector('#wrapper')
-              );
-              dashboard.init();
-            </script>-->
         <?php
             wp_footer();
         ?>
