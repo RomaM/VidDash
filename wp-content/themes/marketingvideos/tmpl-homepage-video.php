@@ -1,11 +1,11 @@
 <?php
 /* Template Name: Homepage Template */
-/*require_once 'wp-login.php';*/
-/*if( !is_user_logged_in()){
-    wp_safe_redirect('/wp-admin');
-    exit;
-}*/
-require_once('video-pages-list.php');
+    /*require_once 'wp-login.php';*/
+    /*if( !is_user_logged_in()){
+        wp_safe_redirect('/wp-admin');
+        exit;
+    }*/
+    require_once('video-pages-list.php');
 ?>
 
 <!DOCTYPE html>
@@ -77,9 +77,21 @@ require_once('video-pages-list.php');
                 <h1 class="content__title">POSTS:</h1>
                 <div id="wrapper"></div>
 
-                <?php var_dump($videoPages);?>
+                <?php
+                    $videoPages = json_encode($videoPages);
+                    var_dump($videoPages);
+                    ?>
+
+                <script>
+                  var jsData = <?php echo $videoPages?>;
+                  let chartDashboard = new ChartData(
+                    jsData
+                  );
+                  chartDashboard.init()
+                </script>
             </div>
         </main>
+
         <?php
         wp_footer();
         ?>
