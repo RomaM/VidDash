@@ -101,9 +101,10 @@
                         $custom_fields = get_post_custom($postId, '', false);
                         $content = $custom_fields['meta-field'];
 
-
-												if (array_key_exists($pageDomain . $pageName, $videoPages)) {
-
+												// Check if video page exists in main array
+												if (array_key_exists($pageDomain . '|' . $pageName, $videoPages)) {
+													// Each post in the DB is unique now
+												} else {
                             $currentDate = '';
                             foreach ( $content as $key => $value ) {
                                 $decodedValues = json_decode($value);
@@ -117,8 +118,10 @@
                                     $userVideoTime = $decodedValue->videotime;
                                     $userTimestamp = $decodedValue->timestamp;
 
+                                    // Check if event date exists in the video page
                                     if (array_key_exists($userDate, $singlePage->date)) {
 
+                                        // Check if user ID exists in the IDs array
                                         if (array_key_exists($userID, $singlePage->date[$userDate]->uids)) {
                                             $eventInfo = (object)[
                                                 'session' => $userSession,
@@ -129,7 +132,7 @@
                                                 'timestamp' => $userTimestamp,
                                             ];
 
-                                        	array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
+																						array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
 
 																				}
 																				else {
@@ -171,39 +174,9 @@
 																		}
                                 }
 
-
-
                             }
 
-												} else {
-                            foreach ( $content as $key => $value ) {
-                                $decodedValues = json_decode($value);
-
-                                foreach ($decodedValues as $decodedValue) {
-                                    $userID = $decodedValue->uid;
-                                    $userSession = $decodedValue->session;
-                                    $userDate = $decodedValue->date;
-                                    $userDevice = $decodedValue->device;
-                                    $userEvent = $decodedValue->event;
-                                    $userVideoTime = $decodedValue->videotime;
-                                    $userTimestamp = $decodedValue->timestamp;
-
-                                    $eventInfo = (object)[
-                                        'session' => $userSession,
-                                        'date' => $userDate,
-                                        'device' => json_encode($userDevice),
-                                        'event' => $userEvent,
-                                        'videoTime' => $userVideoTime,
-                                        'timestamp' => $userTimestamp,
-                                    ];
-
-                                    $singlePage->date[$userDate]->uids[$userID]->events = [];
-
-                                    array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
-                                }
-                            }
-
-                            $videoPages[$pageDomain . $pageName] = $singlePage;
+                            $videoPages[$pageDomain . '|' . $pageName] = $singlePage;
 												}
 
                     }
