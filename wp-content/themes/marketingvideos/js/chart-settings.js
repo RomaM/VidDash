@@ -15,7 +15,7 @@ class ChartData{
     userCountry: [55, 578, 115, 20, 240],
     ctxAvgTime: document.getElementById('avgTime').getContext('2d'),
     ctxScrollIn: document.getElementById('scrollIn').getContext('2d'),
-    ctxScrollOut: document.getElementById('scrollOut').getContext('2d'),
+    ctxUsersPerDay: document.getElementById('usersPerDay').getContext('2d'),
     ctxUserCountry: document.getElementById('userCountry').getContext('2d'),
     currentPage: 'Second-Page-Name',
     users: [],
@@ -24,7 +24,9 @@ class ChartData{
     dates: [],
     eventStrings: [],
     splittedDateArr: [],
-    viewedArr: []
+    viewedArr: [],
+    usersCountForDateArr: []
+
 
   };
 
@@ -102,16 +104,27 @@ class ChartData{
   renderCharts(eventsArray){
     eventsArray.map((ev, i) => {
       let playEventsMax = ev.filter(single => single.event === 'play');
-      console.log('PLAYEVNTS ', playEventsMax[0]);
-      this.chartData.viewedArr.push(playEventsMax[0]);
+      let userLeaveEvents = ev.filter(single => single.event === 'userLeave');
+      console.log('PLAYEVNTS ', userLeaveEvents[0]);
+      this.chartData.viewedArr.push(userLeaveEvents[0]);
       this.chartData.eventsArray[i] = [];
 
-      playEventsMax.map((avgTime, j) => {
+      userLeaveEvents.map((avgTime, j) => {
         this.chartData.eventsArray[i].push(avgTime.videoTime);
       });
     });
 
-    console.log('VIEWEDARR', this.chartData.viewedArr);
+    this.chartData.viewedArr.map((viewed) => {
+      this.chartData.splittedDateArr.push(viewed.date);
+    });
+
+    this.chartData.dates.map((element) => {
+      this.chartData.usersCountForDateArr
+        .push(this.getOccurrence(this.chartData.splittedDateArr, element));
+    });
+
+
+    console.log(this.chartData.usersCountForDateArr);
 
     this.chartData.eventsArray.map((el) => {
       this.chartData.avgPlayTime.push(
@@ -122,15 +135,18 @@ class ChartData{
 
     this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
-    this.chartBuild('avgPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
+    this.chartBuildLinear('avgPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'line', `avg. play time from ${this.chartData.users.length} users`);
-    this.chartBuild('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
+    this.chartBuildLinear('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
       'line', `scroll in position from ${this.chartData.users.length} users`);
+    this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
+      'bar', `viewed users count per day`, this.chartData.dates);
+
   }
 
 
 
-  chartBuild(chartName, wrapper, dataY, type, label){
+  chartBuildLinear(chartName, wrapper, dataY, type, label){
     chartName = new Chart(wrapper, {
       type: type,
       data: {
@@ -166,7 +182,37 @@ class ChartData{
     });
   };
 
-  avgScrollOutChart = new Chart(this.chartData.ctxScrollOut, {
+  chartBuildBar(chartName, wrapper, dataY, type, label, dataX){
+    chartName = new Chart(wrapper, {
+      type: type,
+      data: {
+        labels: dataX,
+        datasets: [{
+          label: label,
+          data: dataY,
+          backgroundColor: this.colorize(this.chartData.avgScrollOutPosition, 'rgba(48, 255, 0, 0.2)')
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'users per day'
+            },
+            ticks: {
+              beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            display: true
+          }]
+        }
+      }
+    });
+  };
+
+  /*avgScrollOutChart = new Chart(this.chartData.ctxScrollOut, {
     type: 'bar',
     data: {
       labels: this.labelsNullify(this.chartData.avgScrollOutPosition),
@@ -192,7 +238,7 @@ class ChartData{
         }]
       }
     }
-  });
+  });*/
 
   userCountry = new Chart(this.chartData.ctxUserCountry, {
     type: 'doughnut',
@@ -238,6 +284,10 @@ class ChartData{
       colors.push(color)
     });
     return colors;
+  }
+
+  getOccurrence(array, value) {
+    return array.filter((v) => (v === value)).length;
   }
 
   logger(text, color, variable){
