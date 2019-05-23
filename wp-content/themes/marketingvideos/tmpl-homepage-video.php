@@ -71,7 +71,7 @@
                         <canvas id="scrollIn" width="400" height="400"></canvas>
                     </div>
                     <div class="chart__box">
-                        <canvas id="scrollOut" width="400" height="400"></canvas>
+                        <canvas id="usersPerDay" width="400" height="400"></canvas>
                     </div>
                     <div class="chart__box">
                         <canvas id="userCountry" width="400" height="400"></canvas>
