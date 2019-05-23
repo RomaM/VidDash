@@ -17,7 +17,7 @@ class ChartData{
     ctxScrollIn: document.getElementById('scrollIn').getContext('2d'),
     ctxUsersPerDay: document.getElementById('usersPerDay').getContext('2d'),
     ctxUserCountry: document.getElementById('userCountry').getContext('2d'),
-    currentPage: 'Second-Page-Name',
+    currentPage: 'Test-Page-Name',
     users: [],
     eventsArray: [],
     dateEventsArray: [],
@@ -135,8 +135,8 @@ class ChartData{
 
     this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
-    this.chartBuildLinear('avgPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
-      'line', `avg. play time from ${this.chartData.users.length} users`);
+    this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
+      'line', `max play time from ${this.chartData.users.length} users`);
     this.chartBuildLinear('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
       'line', `scroll in position from ${this.chartData.users.length} users`);
     this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
