@@ -35,7 +35,10 @@
             <div class="container">
                 <div class="row">
                     <div class="header__filter">
-                        <select class="header__filter-select form-control">
+                        <select class="header__filter-select header__filter-select_domain form-control">
+                            <option>Domain</option>
+                        </select>
+                        <select class="header__filter-select header__filter-select_page form-control">
                             <option>Page name</option>
                         </select>
                         <select class="header__filter-select form-control">
