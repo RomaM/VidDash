@@ -59,35 +59,30 @@
 
         <main class="content">
             <div class="container">
-                <div class="chart">
-                    <div class="chart__box">
-                        <canvas id="avgTime" width="400" height="400"></canvas>
-                    </div>
-                    <div class="chart__box">
-                        <canvas id="scrollIn" width="400" height="400"></canvas>
-                    </div>
-                    <div class="chart__box">
-                        <canvas id="scrollOut" width="400" height="400"></canvas>
-                    </div>
-                    <div class="chart__box">
-                        <canvas id="userCountry" width="400" height="400"></canvas>
-                    </div>
-                </div>
+<!--                <div class="chart">-->
+<!--                    <div class="chart__box">-->
+<!--                        <canvas id="avgTime" width="400" height="400"></canvas>-->
+<!--                    </div>-->
+<!--                    <div class="chart__box">-->
+<!--                        <canvas id="scrollIn" width="400" height="400"></canvas>-->
+<!--                    </div>-->
+<!--                    <div class="chart__box">-->
+<!--                        <canvas id="scrollOut" width="400" height="400"></canvas>-->
+<!--                    </div>-->
+<!--                    <div class="chart__box">-->
+<!--                        <canvas id="userCountry" width="400" height="400"></canvas>-->
+<!--                    </div>-->
+<!--                </div>-->
 
                 <h1 class="content__title">POSTS:</h1>
                 <div id="wrapper"></div>
 
-                <?php
-                    $videoPages = json_encode($videoPages);
-                    var_dump($videoPages);
-                    ?>
+								<?php var_dump($videoPages);?>
 
                 <script>
-                  var jsData = <?php echo $videoPages?>;
-                  let chartDashboard = new ChartData(
-                    jsData
-                  );
-                  chartDashboard.init()
+                  	const videoPages = <?php echo json_encode($videoPages);?>;
+
+                  	console.log(videoPages);
                 </script>
             </div>
         </main>
