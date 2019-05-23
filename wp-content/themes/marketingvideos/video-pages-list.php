@@ -70,6 +70,8 @@ foreach ($posts as $i => $post) {
 
                         $singlePage->date[$userDate]->uids[$userID] = (object)[];
 
+                        $singlePage->date[$userDate]->uids[$userID]->events = [];
+
                         array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
 
 //                        $singlePage->date[$userDate]->uids[$userID] = (object)[
