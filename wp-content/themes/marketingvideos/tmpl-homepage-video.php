@@ -58,6 +58,7 @@
         </header>
 
         <main class="content">
+            <p class="content__title" id="title">Page</p>
             <div class="container">
                 <div class="chart">
                     <div class="chart__box">
@@ -87,7 +88,7 @@
                   let chartDashboard = new ChartData(
                     jsData
                   );
-                  chartDashboard.init()
+                  chartDashboard.init();
                 </script>
             </div>
         </main>
