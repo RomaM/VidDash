@@ -29,7 +29,6 @@ foreach ($posts as $i => $post) {
     if (array_key_exists($pageDomain . '|' . $pageName, $videoPages)) {
         // Each post in the DB is unique now
     } else {
-        $currentDate = '';
         foreach ( $content as $key => $value ) {
             $decodedValues = json_decode($value);
 
@@ -69,14 +68,19 @@ foreach ($posts as $i => $post) {
                             'timestamp' => $userTimestamp,
                         ];
 
-                        $singlePage->date[$userDate]->uids[$userID] = (object)[
-                            'events' => [$eventInfo]
-                        ];
+                        $singlePage->date[$userDate]->uids[$userID] = (object)[];
+
+                        $singlePage->date[$userDate]->uids[$userID]->events = [];
+
+                        array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
+
+//                        $singlePage->date[$userDate]->uids[$userID] = (object)[
+//                            'events' => [$eventInfo]
+//                        ];
 
                     }
 
                 } else {
-                    $currentDate = $userDate;
                     $eventInfo = (object)[
                         'session' => $userSession,
                         'date' => $userDate,
@@ -86,15 +90,25 @@ foreach ($posts as $i => $post) {
                         'timestamp' => $userTimestamp,
                     ];
 
-                    $singlePage->date = [
-                        $userDate => (object)[
+                    $singlePage->date[$userDate] = (object)[
                             'uids' => [
-                                $userID => (object)[
-                                    'events' => [$eventInfo]
-                                ]
+                                    $userID => (object)[
+                                            'events' => [$eventInfo]
+                                    ]
                             ]
-                        ]
                     ];
+
+//                    array_push($singlePage->date, $newDate);
+
+//                    $singlePage->date = [
+//                        $userDate => (object)[
+//                            'uids' => [
+//                                $userID => (object)[
+//                                    'events' => [$eventInfo]
+//                                ]
+//                            ]
+//                        ]
+//                    ];
                 }
             }
 
