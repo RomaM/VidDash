@@ -35,7 +35,10 @@
             <div class="container">
                 <div class="row">
                     <div class="header__filter">
-                        <select class="header__filter-select form-control">
+                        <select class="header__filter-select header__filter-select_domain form-control">
+                            <option>Domain</option>
+                        </select>
+                        <select class="header__filter-select header__filter-select_page form-control">
                             <option>Page name</option>
                         </select>
                         <select class="header__filter-select form-control">
@@ -58,6 +61,7 @@
         </header>
 
         <main class="content">
+            <p class="content__title" id="title">Page</p>
             <div class="container">
                 <div class="chart">
                     <div class="chart__box">
@@ -87,7 +91,7 @@
                   let chartDashboard = new ChartData(
                     jsData
                   );
-                  chartDashboard.init()
+                  chartDashboard.init();
                 </script>
             </div>
         </main>

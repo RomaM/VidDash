@@ -17,33 +17,111 @@ class ChartData{
     ctxScrollIn: document.getElementById('scrollIn').getContext('2d'),
     ctxScrollOut: document.getElementById('scrollOut').getContext('2d'),
     ctxUserCountry: document.getElementById('userCountry').getContext('2d'),
+    currentPage: 'Second-Page-Name',
     users: [],
+    eventsArray: [],
+    dateEventsArray: [],
+    dates: [],
+    eventStrings: [],
+    splittedDateArr: [],
+    viewedArr: []
+
   };
 
   parseData(data){
-    this.logger('Data from chart class: ', '#2bfc07', data);
-    const object = data.date;
-    const pageName = document.getElementById('title');
-    pageName.innerHTML = data.name;
-    object
-      .map(el => {
-        this.chartData.users.push(el.uid[0].id);
-        this.logger('UID: ', 'orange', this.chartData.users);
-        return el.uid
-      })
-      .map(uid => uid[0].events)
-      .map(events => {
-        this.logger('EVENTS: ', 'red', events);
-        for(event of events){
-          this.logger('EVENT: ', 'green', event);
-          this.chartData.avgPlayTime.push(event.videoTime);
-        }
-        return events;
+
+    /*if (filterDomain.length && filterPage.length) {
+      const fullName = filterDomain + '|' +filterPage;
+
+      let dates = [];
+      let uids = [];
+      this.generalData.fullName.map( date => {
+        date.uids.map(uid => {
+          if (uid in uids) {
+            uids.uid.events
+          } else {
+            uids.push()
+          }
+        });
+        dates.push(date);
       });
-    this.renderCharts();
+    }*/
+
+    this.logger('Data from chart class: ', '#2bfc07', data);
+    const object = data;
+    const pageName = document.getElementById('title');
+
+
+    Object.keys(object).map((page) => {
+
+      if(this.chartData.currentPage === object[page].pageName) {
+
+          const pageObj = object[page];
+          const dates = pageObj.date;
+          pageName.innerHTML = pageObj.pageName;
+          this.logger('Dates: ', 'orange', dates);
+          for (let date in dates) {
+            this.chartData.dates.push(date);
+          }
+
+          Object.keys(dates).map((id, i) => {
+
+            this.chartData.dateEventsArray[i] = [];
+            this.chartData.dateEventsArray[i].push(dates[id].uids);
+
+            const uidsObj = dates[id].uids;
+            this.logger('UIDs: ', 'red', uidsObj);
+
+            for (let uid in uidsObj) {
+              this.chartData.users.push(uid);
+              this.chartData.eventsArray.push(uidsObj[uid].events);
+              this.logger('UID strings: ', 'lawngreen', this.chartData.users);
+              this.logger('events: ', 'green', this.chartData.eventsArray);
+            }
+            this.logger('single UID events example: ', 'cyan', uidsObj);
+          });
+
+          /*this.chartData.dateEventsArray.map((el) => {
+            Object.keys(el[0]).map((users) => {
+              console.log('EL ',el[0][users]);
+            });
+          });
+          console.log(this.chartData.dateEventsArray);*/
+
+
+          this.logger('Separate page', 'lightgreen', pageObj);
+          this.logger('Page name: ', 'yellow', pageObj.pageName)
+      }
+
+    });
+
+    this.logger('total events array: ', 'orchid', this.chartData.eventsArray);
+    this.renderCharts(this.chartData.eventsArray);
   };
 
-  renderCharts(){
+  renderCharts(eventsArray){
+    eventsArray.map((ev, i) => {
+      let playEventsMax = ev.filter(single => single.event === 'play');
+      console.log('PLAYEVNTS ', playEventsMax[0]);
+      this.chartData.viewedArr.push(playEventsMax[0]);
+      this.chartData.eventsArray[i] = [];
+
+      playEventsMax.map((avgTime, j) => {
+        this.chartData.eventsArray[i].push(avgTime.videoTime);
+      });
+    });
+
+    console.log('VIEWEDARR', this.chartData.viewedArr);
+
+    this.chartData.eventsArray.map((el) => {
+      this.chartData.avgPlayTime.push(
+        Math.max(...el)
+        /*(el.reduce((a, b) => a+b, 0)) / el.length*/
+      );
+    });
+
+    this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
+
     this.chartBuild('avgPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'line', `avg. play time from ${this.chartData.users.length} users`);
     this.chartBuild('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
