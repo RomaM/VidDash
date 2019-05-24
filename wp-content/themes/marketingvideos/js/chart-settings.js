@@ -77,7 +77,7 @@ class ChartData{
           if (this.chartData.currentPage[2] == singlePage[2]) {
             const pageObj = data[page];
             const dates = pageObj.date;
-            pageName.innerHTML = pageObj.pageName;
+            pageName.innerHTML = singlePage[1];
             this.logger('Dates: ', 'orange', dates);
             for (let date in dates) {
               this.chartData.dates.push(date);
