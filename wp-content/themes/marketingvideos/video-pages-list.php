@@ -15,8 +15,8 @@ foreach ($posts as $i => $post) {
 
     // Creating a page for each unique page with video
     $singlePage = (object)[];
-    $singlePage->pageName = $pageName;
-    $singlePage->videoName = $videoName;
+//    $singlePage->pageName = $pageName;
+//    $singlePage->videoName = $videoName;
     $singlePage->duration = $videoDuration;
     $singlePage->date = [];
 
@@ -26,7 +26,7 @@ foreach ($posts as $i => $post) {
     $content = $custom_fields['meta-field'];
 
     // Check if video page exists in main array
-    if (array_key_exists($pageDomain . '|' . $pageName, $videoPages)) {
+    if (array_key_exists($pageDomain . '|' . $pageName . '|' . $videoName, $videoPages)) {
         // Each post in the DB is unique now
     } else {
         foreach ( $content as $key => $value ) {
@@ -74,10 +74,6 @@ foreach ($posts as $i => $post) {
 
                         array_push($singlePage->date[$userDate]->uids[$userID]->events, $eventInfo);
 
-//                        $singlePage->date[$userDate]->uids[$userID] = (object)[
-//                            'events' => [$eventInfo]
-//                        ];
-
                     }
 
                 } else {
@@ -91,30 +87,19 @@ foreach ($posts as $i => $post) {
                     ];
 
                     $singlePage->date[$userDate] = (object)[
-                            'uids' => [
-                                    $userID => (object)[
-                                            'events' => [$eventInfo]
-                                    ]
+                        'uids' => [
+                            $userID => (object)[
+                                'events' => [$eventInfo]
                             ]
+                        ]
                     ];
 
-//                    array_push($singlePage->date, $newDate);
-
-//                    $singlePage->date = [
-//                        $userDate => (object)[
-//                            'uids' => [
-//                                $userID => (object)[
-//                                    'events' => [$eventInfo]
-//                                ]
-//                            ]
-//                        ]
-//                    ];
                 }
             }
 
         }
 
-        $videoPages[$pageDomain . '|' . $pageName] = $singlePage;
+        $videoPages[$pageDomain . '|' . $pageName . '|' . $videoName] = $singlePage;
     }
 
 }

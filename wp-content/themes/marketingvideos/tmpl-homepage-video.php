@@ -30,27 +30,27 @@
 
 <body <?php is_user_logged_in() ?  body_class() : body_class("login wp-core-ui"); ?>>
 <?php if( is_user_logged_in()){ ?>
+    <div class="loading"></div>
     <div class="page">
         <header class="header">
             <div class="container">
                 <div class="row">
                     <div class="header__filter">
-                        <select class="header__filter-select header__filter-select_domain form-control">
-                            <option>Domain</option>
-                        </select>
-                        <select class="header__filter-select header__filter-select_page form-control">
-                            <option>Page name</option>
-                        </select>
-                        <select class="header__filter-select form-control">
-                            <option>Video name</option>
-                        </select>
-                        <select class="header__filter-select form-control">
-                            <option>Date from</option>
-                        </select>
-                        <select class="header__filter-select form-control">
-                            <option>Date to</option>
-                        </select>
+                        <select id="domainFilter" class="header__filter-select header__filter-select_domain form-control">
 
+                        </select>
+                        <select id="pageFilter" class="header__filter-select header__filter-select_page form-control">
+
+                        </select>
+                        <select id="videoFilter" class="header__filter-select form-control">
+
+                        </select>
+<!--                        <select id="dateFromFilter" class="header__filter-select form-control">-->
+<!---->
+<!--                        </select>-->
+<!--                        <select id="dateToFilter" class="header__filter-select form-control">-->
+<!---->
+<!--                        </select>-->
 
                         <button class="btn btn-primary">
                             Apply
@@ -67,15 +67,15 @@
                     <div class="chart__box">
                         <canvas id="avgTime" width="400" height="400"></canvas>
                     </div>
-                    <div class="chart__box">
+                    <!--<div class="chart__box">
                         <canvas id="scrollIn" width="400" height="400"></canvas>
-                    </div>
+                    </div>-->
                     <div class="chart__box">
                         <canvas id="usersPerDay" width="400" height="400"></canvas>
                     </div>
-                    <div class="chart__box">
+                    <!--<div class="chart__box">
                         <canvas id="userCountry" width="400" height="400"></canvas>
-                    </div>
+                    </div>-->
                 </div>
 
                 <h1 class="content__title">POSTS:</h1>

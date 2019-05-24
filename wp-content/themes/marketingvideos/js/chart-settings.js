@@ -8,16 +8,20 @@ class ChartData{
     this.parseData(this.generalData);
   };
 
+  filtersData = {
+    filterDomain: document.getElementById('domainFilter'),
+    filterPage: document.getElementById('pageFilter'),
+    filterVideo: document.getElementById('videoFilter'),
+    // filterDateFrom: document.getElementById('dateFromFilter'),
+    // filterDateTo: document.getElementById('dateToFilter'),
+    domainSet: new Set(),
+    pageSet: new Set(),
+    videoSet: new Set(),
+  };
+
   chartData = {
     avgPlayTime: [],
-    avgScrollOutPosition: [1.26, 5.33, 8.5, 9.54, 7, 8.2, 7.7, 4.8],
-    avgScrollInPosition: [3.29, 6.55, 8.54, 10.33, 7.5, 10.2, 9.5, 12.3 ],
-    userCountry: [55, 578, 115, 20, 240],
-    ctxAvgTime: document.getElementById('avgTime').getContext('2d'),
-    ctxScrollIn: document.getElementById('scrollIn').getContext('2d'),
-    ctxUsersPerDay: document.getElementById('usersPerDay').getContext('2d'),
-    ctxUserCountry: document.getElementById('userCountry').getContext('2d'),
-    currentPage: 'Test-Page-Name',
+    currentPage: ['', '', ''],
     users: [],
     eventsArray: [],
     dateEventsArray: [],
@@ -25,15 +29,15 @@ class ChartData{
     eventStrings: [],
     splittedDateArr: [],
     viewedArr: [],
-    usersCountForDateArr: []
-
-
+    usersCountForDateArr: [],
+    ctxAvgTime: document.getElementById('avgTime').getContext('2d'),
+    ctxUsersPerDay: document.getElementById('usersPerDay').getContext('2d'),
   };
 
   parseData(data){
 
     /*if (filterDomain.length && filterPage.length) {
-      const fullName = filterDomain + '|' +filterPage;
+      const fullName =  + '|' +filterPage;
 
       let dates = [];
       let uids = [];
@@ -50,52 +54,87 @@ class ChartData{
     }*/
 
     this.logger('Data from chart class: ', '#2bfc07', data);
-    const object = data;
     const pageName = document.getElementById('title');
 
+    Object.keys(data).map((page) => {
+      let singlePage = page.split('|');
 
-    Object.keys(object).map((page) => {
+      this.filtersData.domainSet.add(singlePage[0]);
 
-      if(this.chartData.currentPage === object[page].pageName) {
-
-          const pageObj = object[page];
-          const dates = pageObj.date;
-          pageName.innerHTML = pageObj.pageName;
-          this.logger('Dates: ', 'orange', dates);
-          for (let date in dates) {
-            this.chartData.dates.push(date);
-          }
-
-          Object.keys(dates).map((id, i) => {
-
-            this.chartData.dateEventsArray[i] = [];
-            this.chartData.dateEventsArray[i].push(dates[id].uids);
-
-            const uidsObj = dates[id].uids;
-            this.logger('UIDs: ', 'red', uidsObj);
-
-            for (let uid in uidsObj) {
-              this.chartData.users.push(uid);
-              this.chartData.eventsArray.push(uidsObj[uid].events);
-              this.logger('UID strings: ', 'lawngreen', this.chartData.users);
-              this.logger('events: ', 'green', this.chartData.eventsArray);
-            }
-            this.logger('single UID events example: ', 'cyan', uidsObj);
-          });
-
-          /*this.chartData.dateEventsArray.map((el) => {
-            Object.keys(el[0]).map((users) => {
-              console.log('EL ',el[0][users]);
-            });
-          });
-          console.log(this.chartData.dateEventsArray);*/
-
-
-          this.logger('Separate page', 'lightgreen', pageObj);
-          this.logger('Page name: ', 'yellow', pageObj.pageName)
+      // First time initialization
+      if (!this.chartData.currentPage[0].length) {
+        this.chartData.currentPage[0] = singlePage[0];
+        this.chartData.currentPage[1] = singlePage[1];
+        this.chartData.currentPage[2] = singlePage[2];
       }
 
+      if (this.chartData.currentPage[0] == singlePage[0]) {
+        this.filtersData.pageSet.add(singlePage[1]);
+
+        if(this.chartData.currentPage[1] == singlePage[1]) {
+          this.filtersData.videoSet.add(singlePage[2]);
+
+          if (this.chartData.currentPage[2] == singlePage[2]) {
+            const pageObj = data[page];
+            const dates = pageObj.date;
+            pageName.innerHTML = pageObj.pageName;
+            this.logger('Dates: ', 'orange', dates);
+            for (let date in dates) {
+              this.chartData.dates.push(date);
+            }
+
+            Object.keys(dates).map((id, i) => {
+
+              this.chartData.dateEventsArray[i] = [];
+              this.chartData.dateEventsArray[i].push(dates[id].uids);
+
+              const uidsObj = dates[id].uids;
+              this.logger('UIDs: ', 'red', uidsObj);
+
+              for (let uid in uidsObj) {
+                this.chartData.users.push(uid);
+                this.chartData.eventsArray.push(uidsObj[uid].events);
+                this.logger('UID strings: ', 'lawngreen', this.chartData.users);
+                this.logger('events: ', 'green', this.chartData.eventsArray);
+              }
+              this.logger('single UID events example: ', 'cyan', uidsObj);
+            });
+
+            this.logger('Separate page', 'lightgreen', pageObj);
+            this.logger('Page name: ', 'yellow', pageObj.pageName)
+          }
+        }
+      }
+
+
+
     });
+
+    // Fill out Domains filter
+    this.filtersData.domainSet.forEach(el => {
+      let newOption = document.createElement('option');
+      newOption.innerHTML = el;
+      this.filtersData.filterDomain.appendChild(newOption);
+    });
+    this.filtersData.filterDomain.value = this.chartData.currentPage[0];
+
+    // Fill out pages filter
+    this.filtersData.pageSet.forEach(el => {
+      let newOption = document.createElement('option');
+      newOption.innerHTML = el;
+      this.filtersData.filterPage.appendChild(newOption);
+    });
+    this.filtersData.filterPage.value = this.chartData.currentPage[1];
+
+    // Fill out videos filter
+    this.filtersData.videoSet.forEach(el => {
+      let newOption = document.createElement('option');
+      newOption.innerHTML = el;
+      this.filtersData.filterVideo.appendChild(newOption);
+    });
+    this.filtersData.filterVideo.value = this.chartData.currentPage[2];
+
+    console.log('Video Set', this.filtersData.videoSet);
 
     this.logger('total events array: ', 'orchid', this.chartData.eventsArray);
     this.renderCharts(this.chartData.eventsArray);
@@ -137,8 +176,8 @@ class ChartData{
 
     this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'line', `max play time from ${this.chartData.users.length} users`);
-    this.chartBuildLinear('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
-      'line', `scroll in position from ${this.chartData.users.length} users`);
+    /*this.chartBuildLinear('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
+      'line', `scroll in position from ${this.chartData.users.length} users`);*/
     this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
       'bar', `viewed users count per day`, this.chartData.dates);
 
@@ -190,7 +229,7 @@ class ChartData{
         datasets: [{
           label: label,
           data: dataY,
-          backgroundColor: this.colorize(this.chartData.avgScrollOutPosition, 'rgba(48, 255, 0, 0.2)')
+          backgroundColor: this.colorize(dataY, 'rgba(48, 255, 0, 0.2)')
         }]
       },
       options: {
@@ -212,35 +251,7 @@ class ChartData{
     });
   };
 
-  /*avgScrollOutChart = new Chart(this.chartData.ctxScrollOut, {
-    type: 'bar',
-    data: {
-      labels: this.labelsNullify(this.chartData.avgScrollOutPosition),
-      datasets: [{
-        label: 'scroll out position',
-        data: this.chartData.avgScrollOutPosition,
-        backgroundColor: this.colorize(this.chartData.avgScrollOutPosition, 'rgba(48, 255, 0, 0.2)')
-      }]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          scaleLabel: {
-            display: true,
-            labelString: 'time, s'
-          },
-          ticks: {
-            beginAtZero: true
-          }
-        }],
-        xAxes: [{
-          display: false
-        }]
-      }
-    }
-  });*/
-
-  userCountry = new Chart(this.chartData.ctxUserCountry, {
+  /*userCountry = new Chart(this.chartData.ctxUserCountry, {
     type: 'doughnut',
     data: {
       labels: ['Russia', 'Spain', 'Italy', 'Sweden', 'UAE'],
@@ -266,7 +277,7 @@ class ChartData{
         }]
       }
     }
-  });
+  });*/
 
 
   /*helpers*/
