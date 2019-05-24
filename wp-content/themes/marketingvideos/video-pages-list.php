@@ -7,11 +7,14 @@ $posts = get_posts(array('category_name' => 'videoEvents')); // All posts from V
 
 foreach ($posts as $i => $post) {
     // General details about post
-    $fullContent = json_decode($post->post_content);
-    $pageDomain = $fullContent->domain;
-    $pageName = $fullContent->pageName;
-    $videoName = $fullContent->videoName;
-    $videoDuration = $fullContent->videoDuration;
+//    $fullContent = json_decode($post->post_content);
+    $fullContent = explode('-pageis-', $post->post_title);
+    $pageDomain = $fullContent[0];
+    $fullContent = explode('-videonameis-', $fullContent[1]);
+    $pageName = $fullContent[0];
+    $videoName = $fullContent[1];
+
+    $videoDuration = json_decode($post->post_content)->videoDuration;
 
     // Creating a page for each unique page with video
     $singlePage = (object)[];
