@@ -82,22 +82,20 @@
                 <div id="wrapper">
                     <div class="table">
                         <div class="table__header">
-                            <div class="table__header-videoname">Video Name</div>
-                            <div class="table__header-views">№ of views</div>
-                            <div class="table__header-avgtime">Average playtime</div>
+                            <div class="table__col table__header-videoname">Video Name</div>
+                            <div class="table__col table__header-views">№ of views</div>
+                            <div class="table__col table__header-avgtime">Average playtime</div>
                         </div>
-                        <div class="table__body">
-                            <div class="table__body-videoname">-</div>
-                            <div class="table__body-views">-</div>
-                            <div class="table__body-avgtime">-</div>
+                        <div id="tableBody" class="table__body">
+
                         </div>
                     </div>
                 </div>
 
-                <?php
+                <!--<?php
                     $videoPages = json_encode($videoPages);
                     var_dump($videoPages);
-                    ?>
+                    ?>-->
 
                 <script>
                   var jsData = <?php echo $videoPages?>;

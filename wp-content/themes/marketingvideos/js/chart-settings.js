@@ -128,6 +128,15 @@ class ChartData{
     console.log('stat videoname',videoName);
     console.log('total views', viewsNumber);
     console.log('playAvg', playTimeAvg);
+    const table = document.getElementById('tableBody');
+    const tableWrapper = document.createElement('section');
+    const statisticHtml = `
+      <div class="table__col table__body-videoname">${videoName}</div>
+      <div class="table__col table__body-views">${viewsNumber}</div>
+      <div class="table__col table__body-avgtime">${playTimeAvg} s.</div>
+    `;
+    tableWrapper.innerHTML = statisticHtml;
+    table.appendChild(tableWrapper);
   }
 
 
@@ -214,9 +223,7 @@ class ChartData{
     });
 
     this.chartData.totalUsersCount = this.chartData.usersCountForDateArr
-      .reduce((a, b) => {
-        a + b, 0
-      });
+      .reduce((a, b) => a + b, 0);
 
 
     this.chartData.eventsArray.map((el) => {
@@ -257,10 +264,10 @@ class ChartData{
           label: label,
           data: dataY,
           backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
+            'rgba(84, 0, 178, 0.2)',
           ],
           borderColor: [
-            'rgba(255, 99, 132, 1)',
+            'rgba(84, 0, 178, 1)',
           ],
           borderWidth: 1
         }]
@@ -292,7 +299,7 @@ class ChartData{
         datasets: [{
           label: label,
           data: dataY,
-          backgroundColor: this.colorize(dataY, 'rgba(48, 255, 0, 0.2)')
+          backgroundColor: this.colorize(dataY, 'rgba(67, 1, 141, 0.2)')
         }]
       },
       options: {
