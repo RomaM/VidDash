@@ -52,7 +52,7 @@
 <!---->
 <!--                        </select>-->
 
-                        <button class="btn btn-primary">
+                        <button type="button" id="button" class="btn btn-primary">
                             Apply
                         </button>
                     </div>
@@ -67,24 +67,35 @@
                     <div class="chart__box">
                         <canvas id="avgTime" width="400" height="400"></canvas>
                     </div>
-                    <!--<div class="chart__box">
-                        <canvas id="scrollIn" width="400" height="400"></canvas>
-                    </div>-->
+                    <div class="chart__box">
+                        <canvas id="deviceName" width="400" height="400"></canvas>
+                    </div>
                     <div class="chart__box">
                         <canvas id="usersPerDay" width="400" height="400"></canvas>
                     </div>
-                    <!--<div class="chart__box">
-                        <canvas id="userCountry" width="400" height="400"></canvas>
-                    </div>-->
+                    <div class="chart__box">
+                        <canvas id="orientation" width="400" height="400"></canvas>
+                    </div>
                 </div>
 
-                <h1 class="content__title">POSTS:</h1>
-                <div id="wrapper"></div>
+                <h1 class="content__title">Engagement:</h1>
+                <div id="wrapper">
+                    <div class="table">
+                        <div class="table__header">
+                            <div class="table__col table__header-videoname">Video Name</div>
+                            <div class="table__col table__header-views">№ of views</div>
+                            <div class="table__col table__header-avgtime">Average playtime</div>
+                        </div>
+                        <div id="tableBody" class="table__body">
 
-                <?php
+                        </div>
+                    </div>
+                </div>
+
+                <!--<?php
                     $videoPages = json_encode($videoPages);
                     var_dump($videoPages);
-                    ?>
+                    ?>-->
 
                 <script>
                   var jsData = <?php echo $videoPages?>;

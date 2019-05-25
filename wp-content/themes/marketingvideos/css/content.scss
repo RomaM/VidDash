@@ -36,6 +36,32 @@
   }
 }
 
+.table{
+  padding-top: 20px;
+  border-top: 3px solid #6000c6;
+  &__header{
+    text-align: center;
+    font-weight: 700;
+    .table__col{
+      border-bottom: 1px solid #9c43ff;
+    }
+  }
+  &__col{
+    max-width: 350px;
+    width: 32%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  &__body{
+    section{
+      text-align: center;
+    }
+  }
+}
+
 .element{
   &__title{
     color: #179d00;
