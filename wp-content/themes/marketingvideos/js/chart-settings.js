@@ -50,6 +50,11 @@ class ChartData{
     this.logger('Data from chart class: ', '#2bfc07', data);
     const pageName = document.getElementById('title');
 
+    if(Object.keys(data).length === 0 && data.constructor === Object){
+      this.noEntriesMessage();
+      return false
+    }
+    
     Object.keys(data).map((page) => {
       let singlePage = page.split('|');
 
@@ -122,12 +127,16 @@ class ChartData{
   };
 
 
-
+  noEntriesMessage(){
+    let bodyElement = document.querySelector('body');
+    bodyElement.innerHTML = '';
+    let message = document.createElement('p');
+    message.className = "no-entries";
+    message.innerHTML = `There are no entries yet`;
+    bodyElement.appendChild(message);
+  }
 
   statisticRender(videoName, viewsNumber, playTimeAvg){
-    console.log('stat videoname',videoName);
-    console.log('total views', viewsNumber);
-    console.log('playAvg', playTimeAvg);
     const table = document.getElementById('tableBody');
     const tableWrapper = document.createElement('section');
     const statisticHtml = `
