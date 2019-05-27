@@ -179,7 +179,7 @@ class ChartData{
       deviceNameArrCount.push((JSON.parse(ev[0].device)).name);
       deviceOrientationArrCount.push((JSON.parse(ev[0].device)).orientation);
 
-      playEventsMax.map((avgTime) => {
+      userLeaveEvents.map((avgTime) => {
         avgWatchTime.push(avgTime.videoTime);
       });
 
