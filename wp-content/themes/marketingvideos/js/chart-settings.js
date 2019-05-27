@@ -50,7 +50,7 @@ class ChartData{
     this.logger('Data from chart class: ', '#2bfc07', data);
     const pageName = document.getElementById('title');
 
-    if(Object.keys(data).length === 0 && data.constructor === Object){
+    if(data.length === 0){
       this.noEntriesMessage();
       return false
     }
