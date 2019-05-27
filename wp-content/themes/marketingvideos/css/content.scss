@@ -15,8 +15,14 @@
     text-align: center;
     margin: 10px 0 30px 0;
     color: #555555;
-    font-size: 24px;
-    text-transform: uppercase;
+    font-size: 20px;
+    /*text-transform: uppercase;*/
+    &-wrapper{
+      display: flex;
+      justify-content: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
   }
 
   pre {
@@ -47,17 +53,24 @@
     }
   }
   &__col{
-    max-width: 350px;
-    width: 32%;
+    /*max-width: 350px;*/
+    width: 24%;
     display: inline-block;
     vertical-align: top;
     text-align: left;
     padding: 5px;
     margin-bottom: 5px;
+    &-short{
+      width: 13%;
+    }
   }
   &__body{
     section{
       text-align: center;
+    }
+    &-domainname{
+      font-weight: 700;
+      color: #450082;
     }
   }
 }
