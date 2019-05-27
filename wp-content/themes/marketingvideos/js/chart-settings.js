@@ -156,12 +156,17 @@ class ChartData{
     let deviceOrientationArr = new Set();*/
     let deviceNameArrCount = [];
     let deviceOrientationArrCount = [];
+    let browserArrCount = [];
 
     let deviceObj = {};
     let orientationObj = {};
+    let browserObj = {};
 
     let deviceNumbers = [];
     let deviceTypes = [];
+
+    let browserNumbers = [];
+    let browserTypes = [];
 
     let orientationNumbers = [];
     let orientationTypes = [];
@@ -178,6 +183,7 @@ class ChartData{
 
       deviceNameArrCount.push((JSON.parse(ev[0].device)).name);
       deviceOrientationArrCount.push((JSON.parse(ev[0].device)).orientation);
+      browserArrCount.push((JSON.parse(ev[0].device)).browser);
 
       userLeaveEvents.map((avgTime) => {
         avgWatchTime.push(avgTime.videoTime);
@@ -188,31 +194,38 @@ class ChartData{
       });
     });
 
+    //mapping devices data to objects
     deviceNameArrCount.forEach((x) => {
       deviceObj[x] = (deviceObj[x] || 0) + 1
+    });
+
+    browserArrCount.forEach((x) => {
+      browserObj[x] = (browserObj[x] || 0) + 1
     });
 
     deviceOrientationArrCount.forEach((x) => {
       orientationObj[x] = (orientationObj[x] || 0) + 1
     });
-
-    console.log('DEVICES-arr', deviceNameArrCount);
-    console.log('ORIENTATION-arr', deviceOrientationArrCount);
-    console.log('DEVICES', deviceObj);
-    console.log('ORIENTATION', orientationObj);
+    //end
 
     avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(2);
 
-
+    //mapping devices data in arrays for charts
     Object.keys(deviceObj).map(deviceName => {
       deviceNumbers.push(deviceObj[deviceName]);
       deviceTypes.push(deviceName);
+    });
+
+    Object.keys(browserObj).map(browser => {
+      browserNumbers.push(browserObj[browser]);
+      browserTypes.push(browser);
     });
 
     Object.keys(orientationObj).map(orientationName => {
       orientationNumbers.push(orientationObj[orientationName]);
       orientationTypes.push(orientationName);
     });
+    //end
 
     console.log('DEVICE NUMS', deviceNumbers);
     console.log('DEVICE TYPES', deviceTypes);
@@ -246,18 +259,19 @@ class ChartData{
 
     this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
-    this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
-      'line', `max play time from ${this.chartData.users.length} users`);
-    /*this.chartBuildLinear('avgScrollInChart', this.chartData.ctxScrollIn, this.chartData.avgScrollInPosition,
-      'line', `scroll in position from ${this.chartData.users.length} users`);*/
+    /*this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
+      'line', `max play time from ${this.chartData.users.length} users`);*/
+    this.chartBuildBar('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
+      'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime));
+
     this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
       'bar', `viewed users count per day`, this.chartData.dates);
 
     this.chartBuidCircle('totalDevices', this.chartData.ctxDeviceName, 'device type', 'doughnut',
       deviceTypes, deviceNumbers);
 
-    this.chartBuidCircle('orientations', this.chartData.ctxOrientation, 'orientation type', 'doughnut',
-      orientationTypes, orientationNumbers)
+    this.chartBuidCircle('browserData', this.chartData.ctxOrientation, 'Browsers', 'doughnut',
+      browserTypes, browserNumbers);
   }
 
 
@@ -363,6 +377,14 @@ class ChartData{
 
 
   /*helpers*/
+  iterator(data){
+    const numbers = [];
+    for(let i = 1; i <= data.length; i++){
+      numbers.push(i)
+    }
+    return numbers;
+  }
+
   labelsNullify(data){
     const labels = [];
     data.map(() => {
