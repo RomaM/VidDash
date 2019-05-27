@@ -262,10 +262,10 @@ class ChartData{
     /*this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'line', `max play time from ${this.chartData.users.length} users`);*/
     this.chartBuildBar('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
-      'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime));
+      'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime), 'time, s');
 
     this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
-      'bar', `viewed users count per day`, this.chartData.dates);
+      'bar', `viewed users count per day`, this.chartData.dates, 'users per day');
 
     this.chartBuidCircle('totalDevices', this.chartData.ctxDeviceName, 'device type', 'doughnut',
       deviceTypes, deviceNumbers);
@@ -314,7 +314,7 @@ class ChartData{
     });
   };
 
-  chartBuildBar(chartName, wrapper, dataY, type, label, dataX){
+  chartBuildBar(chartName, wrapper, dataY, type, label, dataX, labelNameY){
     chartName = new Chart(wrapper, {
       type: type,
       data: {
@@ -330,7 +330,7 @@ class ChartData{
           yAxes: [{
             scaleLabel: {
               display: true,
-              labelString: 'users per day'
+              labelString: labelNameY
             },
             ticks: {
               beginAtZero: true
