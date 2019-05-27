@@ -49,6 +49,8 @@ class ChartData{
   parseData(data){
     this.logger('Data from chart class: ', '#2bfc07', data);
     const pageName = document.getElementById('title');
+    const domainName = document.getElementById('domain');
+    const videoName = document.getElementById('video');
 
     if(data.length === 0){
       this.noEntriesMessage();
@@ -87,7 +89,11 @@ class ChartData{
           if (this.chartData.currentPage[2] == singlePage[2]) {
             const pageObj = data[page];
             const dates = pageObj.date;
-            pageName.innerHTML = singlePage[1];
+
+            domainName.innerHTML = `Domain: <b>${singlePage[0]}</b>;&nbsp;&nbsp;`;
+            pageName.innerHTML = `Page name: <b>${singlePage[1]}</b>;&nbsp;&nbsp;`;
+            videoName.innerHTML = `Video name: <b>${singlePage[2]}</b>;`;
+
             this.logger('Dates: ', 'orange', dates);
             for (let date in dates) {
               this.chartData.dates.push(date);
@@ -136,13 +142,15 @@ class ChartData{
     bodyElement.appendChild(message);
   }
 
-  statisticRender(videoName, viewsNumber, playTimeAvg){
+  statisticRender(domainName, pageName, videoName, viewsNumber, playTimeAvg){
     const table = document.getElementById('tableBody');
     const tableWrapper = document.createElement('section');
     const statisticHtml = `
+      <div class="table__col table__body-domainname">${domainName}</div>
+      <div class="table__col table__body-pagename">${pageName}</div>
       <div class="table__col table__body-videoname">${videoName}</div>
-      <div class="table__col table__body-views">${viewsNumber}</div>
-      <div class="table__col table__body-avgtime">${playTimeAvg} s.</div>
+      <div class="table__col table__col-short table__body-views">${viewsNumber}</div>
+      <div class="table__col table__col-short table__body-avgtime">${playTimeAvg} s.</div>
     `;
     tableWrapper.innerHTML = statisticHtml;
     table.appendChild(tableWrapper);
@@ -208,7 +216,7 @@ class ChartData{
     });
     //end
 
-    avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(2);
+    avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(0);
 
     //mapping devices data in arrays for charts
     Object.keys(deviceObj).map(deviceName => {
@@ -250,12 +258,13 @@ class ChartData{
 
     this.chartData.eventsArray.map((el) => {
       this.chartData.avgPlayTime.push(
-        Math.max(...el)
+        Math.max(...el).toFixed(0)
         /*(el.reduce((a, b) => a+b, 0)) / el.length*/
       );
     });
 
-    this.statisticRender(this.chartData.currentPage[2], this.chartData.totalUsersCount, avgTimeTotal);
+    this.statisticRender(this.chartData.currentPage[0], this.chartData.currentPage[1], this.chartData.currentPage[2],
+      this.chartData.totalUsersCount, avgTimeTotal);
 
     this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
