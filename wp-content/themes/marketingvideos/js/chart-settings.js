@@ -46,7 +46,7 @@ class ChartData{
   }*/
 
 
-  parseData(data){
+  parseData(data, isFiltered){
     this.logger('Data from chart class: ', '#2bfc07', data);
     const pageName = document.getElementById('title');
     const domainName = document.getElementById('domain');
@@ -90,11 +90,12 @@ class ChartData{
             const pageObj = data[page];
             const dates = pageObj.date;
 
-            domainName.innerHTML = `Domain: <b>${singlePage[0]}</b>;&nbsp;&nbsp;`;
-            pageName.innerHTML = `Page name: <b>${singlePage[1]}</b>;&nbsp;&nbsp;`;
-            videoName.innerHTML = `Video name: <b>${singlePage[2]}</b>;`;
+            domainName.innerHTML = `Domain: <b>${this.chartData.currentPage[0]}</b>;&nbsp;&nbsp;`;
+            pageName.innerHTML = `Page name: <b>${this.chartData.currentPage[1]}</b>;&nbsp;&nbsp;`;
+            videoName.innerHTML = `Video name: <b>${this.chartData.currentPage[2]}</b>;`;
 
             this.logger('Dates: ', 'orange', dates);
+
             for (let date in dates) {
               this.chartData.dates.push(date);
             }
@@ -124,7 +125,11 @@ class ChartData{
 
     console.log('Video Set', this.filtersData.videoSet);
     this.logger('total events array: ', 'orchid', this.chartData.eventsArray);
-    this.renderCharts(this.chartData.eventsArray);
+
+    if(!isFiltered){
+      this.renderCharts(this.chartData.eventsArray);
+    }
+
   };
 
   renderCharts(eventsArray) {
@@ -190,10 +195,10 @@ class ChartData{
     this.objsNumToTypesMap(browserObj, browserNumbers, browserTypes);
     this.objsNumToTypesMap(orientationObj, orientationNumbers, orientationTypes);
 
-    console.log('DEVICE NUMS', deviceNumbers);
+    /*console.log('DEVICE NUMS', deviceNumbers);
     console.log('DEVICE TYPES', deviceTypes);
     console.log('ORIENT NUMS', orientationNumbers);
-    console.log('ORIENT TYPES', orientationTypes);
+    console.log('ORIENT TYPES', orientationTypes);*/
 
     //viewed count dates array
     this.chartData.viewedArr.map((viewed) => {
@@ -238,7 +243,6 @@ class ChartData{
     this.chartBuidCircle('browserData', this.chartData.ctxOrientation, 'Browsers', 'doughnut',
       browserTypes, browserNumbers);
   }
-
 
   chartBuildLinear(chartName, wrapper, dataY, type, label){
     chartName = new Chart(wrapper, {
@@ -336,7 +340,6 @@ class ChartData{
     });
   }
 
-
   noEntriesMessage(){
     let bodyElement = document.querySelector('body');
     bodyElement.innerHTML = '';
@@ -409,8 +412,13 @@ class ChartData{
     console.log(`%c${text}`,`color: ${color}` ,variable);
   }
 
-  filterFillOut(set, selectElement, titlePart){
+  filterFillOut(set, selectElement, titlePart, filterType){
+    /*if(filterType == 'domain'){
+      selectElement.innerHTML = '';
+    }*/
+
     set.forEach(el => {
+      // selectElement.innerHTML = '';
       let newOption = document.createElement('option');
       newOption.innerHTML = el;
       newOption.value = el;
@@ -422,16 +430,23 @@ class ChartData{
 
 
   init(){
-    this.parseData(this.generalData);
-
+    this.parseData(this.generalData, false);
     // Fill out Domains filter
     this.filterFillOut(this.filtersData.domainSet, this.filtersData.filterDomain, this.chartData.currentPage[0]);
-
     // Fill out pages filter
     this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage, this.chartData.currentPage[1]);
-
     // Fill out video filter
     this.filterFillOut(this.filtersData.videoSet, this.filtersData.filterVideo, this.chartData.currentPage[2]);
+
+    this.filtersData.filterDomain.addEventListener('change', (e)=> {
+      this.filtersData.pageSet.clear();
+      this.chartData.currentPage[0] = this.filtersData.filterDomain.value;
+      this.parseData(this.generalData, true);
+      console.log('PAGESET', this.filtersData.pageSet);
+      this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage,
+        this.chartData.currentPage[1], 'domain');
+      console.log('DOMAIN', this.chartData.currentPage[0]);
+    });
 
     // this.filtersData.filterDomain.addEventListener('change', () => {
     //   this.filtersData.pageSet.clear();
