@@ -33,7 +33,7 @@ class ChartData{
   };
 
 
-  resetProperties(){
+  /*resetProperties(){
     this.chartData.avgPlayTime = [];
     this.chartData.users = [];
     this.chartData.eventsArray = [];
@@ -43,7 +43,7 @@ class ChartData{
     this.chartData.splittedDateArr = [];
     this.chartData.viewedArr = [];
     this.chartData.usersCountForDateArr = [];
-  }
+  }*/
 
 
   parseData(data){
@@ -122,73 +122,40 @@ class ChartData{
       }
     });
 
-
-
     console.log('Video Set', this.filtersData.videoSet);
-
     this.logger('total events array: ', 'orchid', this.chartData.eventsArray);
     this.renderCharts(this.chartData.eventsArray);
-
-
   };
-
-
-  noEntriesMessage(){
-    let bodyElement = document.querySelector('body');
-    bodyElement.innerHTML = '';
-    let message = document.createElement('p');
-    message.className = "no-entries";
-    message.innerHTML = `There are no entries yet`;
-    bodyElement.appendChild(message);
-  }
-
-  statisticRender(domainName, pageName, videoName, viewsNumber, playTimeAvg){
-    const table = document.getElementById('tableBody');
-    const tableWrapper = document.createElement('section');
-    const statisticHtml = `
-      <div class="table__col table__body-domainname">${domainName}</div>
-      <div class="table__col table__body-pagename">${pageName}</div>
-      <div class="table__col table__body-videoname">${videoName}</div>
-      <div class="table__col table__col-short table__body-views">${viewsNumber}</div>
-      <div class="table__col table__col-short table__body-avgtime">${playTimeAvg} s.</div>
-    `;
-    tableWrapper.innerHTML = statisticHtml;
-    table.appendChild(tableWrapper);
-  }
-
 
   renderCharts(eventsArray) {
     let avgTimeTotal;
     let avgWatchTime = [];
-    /*let deviceNameArr = new Set();
-    let deviceOrientationArr = new Set();*/
+
     let deviceNameArrCount = [];
     let deviceOrientationArrCount = [];
     let browserArrCount = [];
-
+    /*device data objects*/
     let deviceObj = {};
     let orientationObj = {};
     let browserObj = {};
-
+    /*device data arrays*/
     let deviceNumbers = [];
     let deviceTypes = [];
-
     let browserNumbers = [];
     let browserTypes = [];
-
     let orientationNumbers = [];
     let orientationTypes = [];
 
     eventsArray.map((ev, i) => {
+      //filter events for types
       let playEventsMax = ev.filter(single => single.event === 'play');
       let userLeaveEvents = ev.filter(single => single.event === 'userLeave');
       this.chartData.viewedArr.push(userLeaveEvents[0]);
       this.chartData.eventsArray[i] = [];
 
       console.log("EVENTS MAPPED", ev);
-      /*deviceNameArr.add((JSON.parse(ev[0].device)).name);
-      deviceOrientationArr.add((JSON.parse(ev[0].device)).orientation);*/
 
+      //get devices info
       deviceNameArrCount.push((JSON.parse(ev[0].device)).name);
       deviceOrientationArrCount.push((JSON.parse(ev[0].device)).orientation);
       browserArrCount.push((JSON.parse(ev[0].device)).browser);
@@ -219,43 +186,33 @@ class ChartData{
     avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(0);
 
     //mapping devices data in arrays for charts
-    Object.keys(deviceObj).map(deviceName => {
-      deviceNumbers.push(deviceObj[deviceName]);
-      deviceTypes.push(deviceName);
-    });
-
-    Object.keys(browserObj).map(browser => {
-      browserNumbers.push(browserObj[browser]);
-      browserTypes.push(browser);
-    });
-
-    Object.keys(orientationObj).map(orientationName => {
-      orientationNumbers.push(orientationObj[orientationName]);
-      orientationTypes.push(orientationName);
-    });
-    //end
+    this.objsNumToTypesMap(deviceObj, deviceNumbers, deviceTypes);
+    this.objsNumToTypesMap(browserObj, browserNumbers, browserTypes);
+    this.objsNumToTypesMap(orientationObj, orientationNumbers, orientationTypes);
 
     console.log('DEVICE NUMS', deviceNumbers);
     console.log('DEVICE TYPES', deviceTypes);
-
     console.log('ORIENT NUMS', orientationNumbers);
     console.log('ORIENT TYPES', orientationTypes);
 
+    //viewed count dates array
     this.chartData.viewedArr.map((viewed) => {
       if (viewed !== undefined) {
         this.chartData.splittedDateArr.push(viewed.date);
       }
     });
 
+    //dates array
     this.chartData.dates.map((element) => {
       this.chartData.usersCountForDateArr
         .push(this.getOccurrence(this.chartData.splittedDateArr, element));
     });
 
+    //user count for dates
     this.chartData.totalUsersCount = this.chartData.usersCountForDateArr
       .reduce((a, b) => a + b, 0);
 
-
+    //max video played
     this.chartData.eventsArray.map((el) => {
       this.chartData.avgPlayTime.push(
         Math.max(...el).toFixed(0)
@@ -263,28 +220,24 @@ class ChartData{
       );
     });
 
+    //statistics at bottom page
     this.statisticRender(this.chartData.currentPage[0], this.chartData.currentPage[1], this.chartData.currentPage[2],
       this.chartData.totalUsersCount, avgTimeTotal);
 
     this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
+    //charts build
     /*this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'line', `max play time from ${this.chartData.users.length} users`);*/
     this.chartBuildBar('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime), 'time, s');
-
     this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
       'bar', `viewed users count per day`, this.chartData.dates, 'users per day');
-
     this.chartBuidCircle('totalDevices', this.chartData.ctxDeviceName, 'device type', 'doughnut',
       deviceTypes, deviceNumbers);
-
     this.chartBuidCircle('browserData', this.chartData.ctxOrientation, 'Browsers', 'doughnut',
       browserTypes, browserNumbers);
   }
-
-
-
 
 
   chartBuildLinear(chartName, wrapper, dataY, type, label){
@@ -384,8 +337,42 @@ class ChartData{
   }
 
 
+  noEntriesMessage(){
+    let bodyElement = document.querySelector('body');
+    bodyElement.innerHTML = '';
+    let message = document.createElement('p');
+    message.className = "no-entries";
+    message.innerHTML = `There are no entries yet`;
+    bodyElement.appendChild(message);
+  }
+
+  statisticRender(domainName, pageName, videoName, viewsNumber, playTimeAvg){
+    const table = document.getElementById('tableBody');
+    const tableWrapper = document.createElement('section');
+
+    const minutes = Math.floor(playTimeAvg / 60);
+    const seconds = Math.floor(playTimeAvg - minutes * 60);
+
+    const timeRightPart = this.timeLeftPart(minutes, '0', 2)+':'+this.timeLeftPart(seconds, '0', 2);
+    const statisticHtml = `
+      <div class="table__col table__body-domainname">${domainName}</div>
+      <div class="table__col table__body-pagename">${pageName}</div>
+      <div class="table__col table__body-videoname">${videoName}</div>
+      <div class="table__col table__col-short table__body-views">${viewsNumber}</div>
+      <div class="table__col table__col-short table__body-avgtime">${timeRightPart} min.</div>
+    `;
+    tableWrapper.innerHTML = statisticHtml;
+    table.appendChild(tableWrapper);
+  }
 
   /*helpers*/
+  objsNumToTypesMap(obj, numbersArray, typesArray){
+    Object.keys(obj).map(el => {
+      numbersArray.push(obj[el]);
+      typesArray.push(el);
+    });
+  };
+
   iterator(data){
     const numbers = [];
     for(let i = 1; i <= data.length; i++){
@@ -414,42 +401,37 @@ class ChartData{
     return array.filter((v) => (v === value)).length;
   }
 
+  timeLeftPart(string, pad, length){
+    return (new Array(length + 1).join(pad) + string).slice(-length);
+  }
+
   logger(text, color, variable){
     console.log(`%c${text}`,`color: ${color}` ,variable);
   }
+
+  filterFillOut(set, selectElement, titlePart){
+    set.forEach(el => {
+      let newOption = document.createElement('option');
+      newOption.innerHTML = el;
+      newOption.value = el;
+      selectElement.appendChild(newOption);
+    });
+    selectElement.value = titlePart;
+  }
+  //end helpers
+
 
   init(){
     this.parseData(this.generalData);
 
     // Fill out Domains filter
-    this.filtersData.domainSet.forEach(el => {
-      let newOption = document.createElement('option');
-      newOption.innerHTML = el;
-      newOption.value = el;
-      this.filtersData.filterDomain.appendChild(newOption);
-    });
-    this.filtersData.filterDomain.value = this.chartData.currentPage[0];
-
+    this.filterFillOut(this.filtersData.domainSet, this.filtersData.filterDomain, this.chartData.currentPage[0]);
 
     // Fill out pages filter
-    this.filtersData.pageSet.forEach(el => {
-      let newOption = document.createElement('option');
-      newOption.innerHTML = el;
-      newOption.value = el;
-      this.filtersData.filterPage.appendChild(newOption);
-    });
-    this.filtersData.filterPage.value = this.chartData.currentPage[1];
+    this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage, this.chartData.currentPage[1]);
 
     // Fill out video filter
-    this.filtersData.videoSet.forEach(el => {
-      let newOption = document.createElement('option');
-      newOption.innerHTML = el;
-      newOption.value = el;
-      this.filtersData.filterVideo.appendChild(newOption);
-    });
-    this.filtersData.filterVideo.value = this.chartData.currentPage[2];
-
-
+    this.filterFillOut(this.filtersData.videoSet, this.filtersData.filterVideo, this.chartData.currentPage[2]);
 
     // this.filtersData.filterDomain.addEventListener('change', () => {
     //   this.filtersData.pageSet.clear();
