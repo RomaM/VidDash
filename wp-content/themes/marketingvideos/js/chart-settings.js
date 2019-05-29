@@ -1,4 +1,3 @@
-
 class ChartData{
   constructor(generalData){
     this.generalData = generalData;
@@ -8,10 +7,10 @@ class ChartData{
     filterDomain: document.getElementById('domainFilter'),
     filterPage: document.getElementById('pageFilter'),
     filterVideo: document.getElementById('videoFilter'),
-    filterButton: document.getElementById('button'),
+    filterApply: document.getElementById('button'),
     domainSet: new Set(),
     pageSet: new Set(),
-    videoSet: new Set(),
+    videoSet: new Set()
   };
 
   chartData = {
@@ -30,33 +29,41 @@ class ChartData{
     ctxUsersPerDay: document.getElementById('usersPerDay').getContext('2d'),
     ctxDeviceName: document.getElementById('deviceName').getContext('2d'),
     ctxOrientation: document.getElementById('orientation').getContext('2d'),
+    chartMaxPlayTime: {},
+    chartDevices: {},
+    chartBrowsers: {},
+    chartUsers: {}
   };
 
+  filterFillOut(set, selectElement, titlePart, filterType){
+    selectElement.innerHTML = '';
 
-  /*resetProperties(){
-    this.chartData.avgPlayTime = [];
-    this.chartData.users = [];
-    this.chartData.eventsArray = [];
-    this.chartData.dateEventsArray = [];
-    this.chartData.dates = [];
-    this.chartData.eventStrings = [];
-    this.chartData.splittedDateArr = [];
-    this.chartData.viewedArr = [];
-    this.chartData.usersCountForDateArr = [];
-  }*/
+    set.forEach(el => {
+      let newOption = document.createElement('option');
+      newOption.innerHTML = el;
+      newOption.value = el;
+      selectElement.appendChild(newOption);
+    });
+    selectElement.value = titlePart;
+  }
 
-
-  parseData(data, isFiltered){
+  parseData(data){
     this.logger('Data from chart class: ', '#2bfc07', data);
-    const pageName = document.getElementById('title');
-    const domainName = document.getElementById('domain');
-    const videoName = document.getElementById('video');
 
     if(data.length === 0){
       this.noEntriesMessage();
       return false
     }
-    
+
+    this.filtersData.pageSet.clear();
+    this.filtersData.videoSet.clear();
+    this.chartData.eventsArray = [];
+    this.chartData.dates = [];
+    this.chartData.totalUsersCount = [];
+    this.chartData.splittedDateArr = [];
+    this.chartData.usersCountForDateArr = [];
+
+
     Object.keys(data).map((page) => {
       let singlePage = page.split('|');
 
@@ -80,9 +87,9 @@ class ChartData{
 
         if(this.chartData.currentPage[1] == singlePage[1]) {
 
-          // if (!this.chartData.currentPage[2].length) {
-          //   this.chartData.currentPage[2] = singlePage[2];
-          // }
+          if (!this.chartData.currentPage[2].length) {
+            this.chartData.currentPage[2] = singlePage[2];
+          }
 
           this.filtersData.videoSet.add(singlePage[2]);
 
@@ -90,11 +97,9 @@ class ChartData{
             const pageObj = data[page];
             const dates = pageObj.date;
 
-            domainName.innerHTML = `Domain: <b>${this.chartData.currentPage[0]}</b>;&nbsp;&nbsp;`;
-            pageName.innerHTML = `Page name: <b>${this.chartData.currentPage[1]}</b>;&nbsp;&nbsp;`;
-            videoName.innerHTML = `Video name: <b>${this.chartData.currentPage[2]}</b>;`;
-
-            this.logger('Dates: ', 'orange', dates);
+            document.getElementById('domain').innerHTML = `Domain: <b>${this.chartData.currentPage[0]}</b>;&nbsp;&nbsp;`;
+            document.getElementById('title').innerHTML = `Page name: <b>${this.chartData.currentPage[1]}</b>;&nbsp;&nbsp;`;
+            document.getElementById('video').innerHTML = `Video name: <b>${this.chartData.currentPage[2]}</b>;`;
 
             for (let date in dates) {
               this.chartData.dates.push(date);
@@ -106,33 +111,25 @@ class ChartData{
               this.chartData.dateEventsArray[i].push(dates[id].uids);
 
               const uidsObj = dates[id].uids;
-              this.logger('UIDs: ', 'red', uidsObj);
 
               for (let uid in uidsObj) {
                 this.chartData.users.push(uid);
                 this.chartData.eventsArray.push(uidsObj[uid].events);
-                this.logger('UID strings: ', 'lawngreen', this.chartData.users);
-                this.logger('events: ', 'green', this.chartData.eventsArray);
               }
-              this.logger('single UID events example: ', 'cyan', uidsObj);
             });
-            this.logger('Separate page', 'lightgreen', pageObj);
-            this.logger('Page name: ', 'yellow', pageObj.pageName)
           }
         }
       }
     });
 
-    console.log('Video Set', this.filtersData.videoSet);
-    this.logger('total events array: ', 'orchid', this.chartData.eventsArray);
-
-    if(!isFiltered){
-      this.renderCharts(this.chartData.eventsArray);
-    }
-
+    // Fill out pages filter
+    this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage, this.chartData.currentPage[1]);
+    // Fill out video filter
+    this.filterFillOut(this.filtersData.videoSet, this.filtersData.filterVideo, this.chartData.currentPage[2]);
   };
 
   renderCharts(eventsArray) {
+    this.chartData.avgPlayTime = [];
     let avgTimeTotal;
     let avgWatchTime = [];
 
@@ -157,8 +154,6 @@ class ChartData{
       let userLeaveEvents = ev.filter(single => single.event === 'userLeave');
       this.chartData.viewedArr.push(userLeaveEvents[0]);
       this.chartData.eventsArray[i] = [];
-
-      console.log("EVENTS MAPPED", ev);
 
       //get devices info
       deviceNameArrCount.push((JSON.parse(ev[0].device)).name);
@@ -195,11 +190,6 @@ class ChartData{
     this.objsNumToTypesMap(browserObj, browserNumbers, browserTypes);
     this.objsNumToTypesMap(orientationObj, orientationNumbers, orientationTypes);
 
-    /*console.log('DEVICE NUMS', deviceNumbers);
-    console.log('DEVICE TYPES', deviceTypes);
-    console.log('ORIENT NUMS', orientationNumbers);
-    console.log('ORIENT TYPES', orientationTypes);*/
-
     //viewed count dates array
     this.chartData.viewedArr.map((viewed) => {
       if (viewed !== undefined) {
@@ -229,18 +219,14 @@ class ChartData{
     this.statisticRender(this.chartData.currentPage[0], this.chartData.currentPage[1], this.chartData.currentPage[2],
       this.chartData.totalUsersCount, avgTimeTotal);
 
-    this.logger('Parsed values: ', 'skyblue', this.chartData.eventsArray);
 
-    //charts build
-    /*this.chartBuildLinear('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
-      'line', `max play time from ${this.chartData.users.length} users`);*/
-    this.chartBuildBar('maxPlayTime', this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
+    this.chartData.chartMaxPlayTime = this.chartBuildBar(this.chartData.chartMaxPlayTime, this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime), 'time, s');
-    this.chartBuildBar('avgUsersPerDay', this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
+    this.chartData.chartUsers = this.chartBuildBar(this.chartData.chartUsers, this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
       'bar', `viewed users count per day`, this.chartData.dates, 'users per day');
-    this.chartBuidCircle('totalDevices', this.chartData.ctxDeviceName, 'device type', 'doughnut',
+    this.chartData.chartDevices = this.chartBuidCircle(this.chartData.chartDevices, this.chartData.ctxDeviceName, 'device type', 'doughnut',
       deviceTypes, deviceNumbers);
-    this.chartBuidCircle('browserData', this.chartData.ctxOrientation, 'Browsers', 'doughnut',
+    this.chartData.chartBrowsers = this.chartBuidCircle(this.chartData.chartBrowsers, this.chartData.ctxOrientation, 'Browsers', 'doughnut',
       browserTypes, browserNumbers);
   }
 
@@ -280,8 +266,12 @@ class ChartData{
     });
   };
 
-  chartBuildBar(chartName, wrapper, dataY, type, label, dataX, labelNameY){
-    chartName = new Chart(wrapper, {
+  chartBuildBar(chart, wrapper, dataY, type, label, dataX, labelNameY){
+    if ( Object.keys(chart).length > 0 ) {
+      chart.destroy();
+    }
+
+    chart = new Chart(wrapper, {
       type: type,
       data: {
         labels: dataX,
@@ -308,10 +298,16 @@ class ChartData{
         }
       }
     });
+
+    return chart;
   };
 
-  chartBuidCircle(chartName, wrapper, label, type, labels, data){
-    chartName = new Chart(wrapper, {
+  chartBuidCircle(chart, wrapper, label, type, labels, data){
+    if ( Object.keys(chart).length > 0 ) {
+      chart.destroy();
+    }
+
+    chart = new Chart(wrapper, {
       type: type,
       data: {
         labels: labels,
@@ -338,6 +334,7 @@ class ChartData{
         }
       }
     });
+    return chart;
   }
 
   noEntriesMessage(){
@@ -351,6 +348,7 @@ class ChartData{
 
   statisticRender(domainName, pageName, videoName, viewsNumber, playTimeAvg){
     const table = document.getElementById('tableBody');
+    table.innerHTML = '';
     const tableWrapper = document.createElement('section');
 
     const minutes = Math.floor(playTimeAvg / 60);
@@ -412,72 +410,47 @@ class ChartData{
     console.log(`%c${text}`,`color: ${color}` ,variable);
   }
 
-  filterFillOut(set, selectElement, titlePart, filterType){
-    /*if(filterType == 'domain'){
-      selectElement.innerHTML = '';
-    }*/
-
-    set.forEach(el => {
-      // selectElement.innerHTML = '';
-      let newOption = document.createElement('option');
-      newOption.innerHTML = el;
-      newOption.value = el;
-      selectElement.appendChild(newOption);
-    });
-    selectElement.value = titlePart;
-  }
   //end helpers
 
 
   init(){
-    this.parseData(this.generalData, false);
-    // Fill out Domains filter
-    this.filterFillOut(this.filtersData.domainSet, this.filtersData.filterDomain, this.chartData.currentPage[0]);
-    // Fill out pages filter
-    this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage, this.chartData.currentPage[1]);
-    // Fill out video filter
-    this.filterFillOut(this.filtersData.videoSet, this.filtersData.filterVideo, this.chartData.currentPage[2]);
+    this.parseData(this.generalData);
 
-    this.filtersData.filterDomain.addEventListener('change', (e)=> {
-      this.filtersData.pageSet.clear();
-      this.chartData.currentPage[0] = this.filtersData.filterDomain.value;
-      this.parseData(this.generalData, true);
-      console.log('PAGESET', this.filtersData.pageSet);
-      this.filterFillOut(this.filtersData.pageSet, this.filtersData.filterPage,
-        this.chartData.currentPage[1], 'domain');
-      console.log('DOMAIN', this.chartData.currentPage[0]);
+    if (this.chartData.eventsArray) {
+      // Fill out Domains filter
+      this.filterFillOut(this.filtersData.domainSet, this.filtersData.filterDomain, this.chartData.currentPage[0]);
+
+      this.renderCharts(this.chartData.eventsArray);
+    }
+
+    let selectsArr = [this.filtersData.filterDomain, this.filtersData.filterPage, this.filtersData.filterVideo];
+    selectsArr.forEach( select => {
+      select.addEventListener('change', el => {
+        switch(el.target) {
+          case this.filtersData.filterDomain:
+            this.chartData.currentPage[0] = el.target.value;
+            this.chartData.currentPage[1] = '';
+            this.chartData.currentPage[2] = '';
+            break;
+          case this.filtersData.filterPage:
+            this.chartData.currentPage[1] = el.target.value;
+            this.chartData.currentPage[2] = '';
+            break;
+          case this.filtersData.filterVideo:
+            this.chartData.currentPage[2] = el.target.value;
+            break;
+          default: break;
+        }
+        this.parseData(this.generalData);
+      });
     });
 
-    // this.filtersData.filterDomain.addEventListener('change', () => {
-    //   this.filtersData.pageSet.clear();
-    //
-    //   console.log(this.filtersData.pageSet);
-    //
-    //   this.chartData.currentPage[0] = this.filtersData.filterDomain.value;
-    //
-    //   this.parseData(this.generalData);
-    //
-    //   // Fill out pages filter
-    //   this.filtersData.pageSet.forEach(el => {
-    //     let newOption = document.createElement('option');
-    //     newOption.innerHTML = el;
-    //     newOption.value = el;
-    //     this.filtersData.filterPage.appendChild(newOption);
-    //   });
-    //   this.filtersData.filterPage.value = this.chartData.currentPage[1];
-    // });
-
-    // this.filtersData.filterButton.addEventListener('click', (e) => {
-    //   console.log(e);
-    //   this.resetProperties();
-    //   this.parseData(this.generalData);
-    // });
+    this.filtersData.filterApply.addEventListener('click', btn => {
+      if (this.chartData.eventsArray.length) {
+        console.log(this.chartData.eventsArray);
+        this.renderCharts(this.chartData.eventsArray);
+      }
+    });
 
   };
 }
-
-
-
-
-
-

@@ -72,6 +72,15 @@
                     <div class="chart__box">
                         <canvas id="avgTime" width="400" height="400"></canvas>
                     </div>
+
+                    <!--<div class="chart__box">
+                        <canvas id="muted" width="400" height="400"></canvas>
+                    </div>
+                    <div class="chart__box">
+                        <canvas id="formFilling" width="400" height="400"></canvas>
+                    </div>-->
+
+
                     <div class="chart__box">
                         <canvas id="deviceName" width="400" height="400"></canvas>
                     </div>
