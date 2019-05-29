@@ -210,8 +210,8 @@ class ChartData{
     console.log("SPLITTED", this.chartData.splittedDateArr);
 
     //user count for dates
-    this.chartData.totalUsersCount = this.chartData.usersCountForDateArr.length;
-      //.reduce((a, b) => a + b, 0);
+    this.chartData.totalUsersCount = this.chartData.usersCountForDateArr
+      .reduce((a, b) => a + b, 0);
 
 
     //max video played
