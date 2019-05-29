@@ -99,7 +99,7 @@
                             <div class="table__col table__header-domainname">Domain name</div>
                             <div class="table__col table__header-pagename">Page name</div>
                             <div class="table__col table__header-videoname">Video Name</div>
-                            <div class="table__col table__col-short table__header-views">№ of views</div>
+                            <div class="table__col table__col-short table__header-views">№ of users</div>
                             <div class="table__col table__col-short table__header-avgtime">Average playtime</div>
                         </div>
                         <div id="tableBody" class="table__body">
