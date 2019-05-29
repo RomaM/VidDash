@@ -59,9 +59,11 @@ class ChartData{
     this.filtersData.videoSet.clear();
     this.chartData.eventsArray = [];
     this.chartData.dates = [];
-    this.chartData.totalUsersCount = [];
+    this.chartData.totalUsersCount = 0;
     this.chartData.splittedDateArr = [];
     this.chartData.usersCountForDateArr = [];
+    this.chartData.viewedArr = [];
+
 
 
     Object.keys(data).map((page) => {
@@ -129,6 +131,8 @@ class ChartData{
   };
 
   renderCharts(eventsArray) {
+    this.chartData.splittedDateArr = [];
+
     this.chartData.avgPlayTime = [];
     let avgTimeTotal;
     let avgWatchTime = [];
@@ -202,10 +206,13 @@ class ChartData{
       this.chartData.usersCountForDateArr
         .push(this.getOccurrence(this.chartData.splittedDateArr, element));
     });
+    console.log("DATES", this.chartData.dates);
+    console.log("SPLITTED", this.chartData.splittedDateArr);
 
     //user count for dates
-    this.chartData.totalUsersCount = this.chartData.usersCountForDateArr
-      .reduce((a, b) => a + b, 0);
+    this.chartData.totalUsersCount = this.chartData.usersCountForDateArr.length;
+      //.reduce((a, b) => a + b, 0);
+
 
     //max video played
     this.chartData.eventsArray.map((el) => {
@@ -222,12 +229,14 @@ class ChartData{
 
     this.chartData.chartMaxPlayTime = this.chartBuildBar(this.chartData.chartMaxPlayTime, this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
       'bar', `max play time from user`, this.iterator(this.chartData.avgPlayTime), 'time, s');
+
     this.chartData.chartUsers = this.chartBuildBar(this.chartData.chartUsers, this.chartData.ctxUsersPerDay, this.chartData.usersCountForDateArr,
       'bar', `viewed users count per day`, this.chartData.dates, 'users per day');
     this.chartData.chartDevices = this.chartBuidCircle(this.chartData.chartDevices, this.chartData.ctxDeviceName, 'device type', 'doughnut',
       deviceTypes, deviceNumbers);
     this.chartData.chartBrowsers = this.chartBuidCircle(this.chartData.chartBrowsers, this.chartData.ctxOrientation, 'Browsers', 'doughnut',
       browserTypes, browserNumbers);
+
   }
 
   chartBuildLinear(chartName, wrapper, dataY, type, label){
