@@ -223,8 +223,8 @@ class ChartData{
     });
 
     //statistics at bottom page
-    this.statisticRender(this.chartData.currentPage[0], this.chartData.currentPage[1], this.chartData.currentPage[2],
-      this.chartData.totalUsersCount, avgTimeTotal);
+    /*this.statisticRender(this.chartData.currentPage[0], this.chartData.currentPage[1], this.chartData.currentPage[2],
+      this.chartData.totalUsersCount, avgTimeTotal);*/
 
 
     this.chartData.chartMaxPlayTime = this.chartBuildBar(this.chartData.chartMaxPlayTime, this.chartData.ctxAvgTime, this.chartData.avgPlayTime,
