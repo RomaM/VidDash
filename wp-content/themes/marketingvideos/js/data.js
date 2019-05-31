@@ -21,7 +21,7 @@ class Data {
     unmutedEvents: [],
     pauseEvents: [],
     formfocusEvents: [],
-    submitEvents: []
+    scrollOutEvents: []
   };
 
   totalData = {};
@@ -106,6 +106,7 @@ class Data {
       this.globalEvents.unmutedEvents[i] = [];
       this.globalEvents.pauseEvents[i] = [];
       this.globalEvents.formfocusEvents[i] = [];
+      this.globalEvents.scrollOutEvents[i] = [];
 
       el.map((single) => {
         switch (single.event){
@@ -127,13 +128,16 @@ class Data {
           case ('formfocus'):
             this.globalEvents.formfocusEvents[i].push(single.videoTime);
             break;
+          case ('ScrollOut'):
+            this.globalEvents.scrollOutEvents[i].push(single.videoTime);
+            break;
         }
       });
 
     });
   }
 
-  calculation(play, userLeave, mute, unmute, pause, formfocus, views, incativeViews){
+  calculation(play, userLeave, mute, unmute, pause, formfocus, views, incativeViews, scroll){
     let avgWatchTime = [];
     let numberOfViews = [];
     let isActiveView = [];
@@ -141,6 +145,7 @@ class Data {
     let scrolling = [];
     let avgAbandone = [];
     let inactiveViewsNumber = [];
+    let scrollOut = [];
 
     mute.map((el) => {
       if(el.length){
@@ -166,15 +171,10 @@ class Data {
       }
     }
 
-    formfocus.map((el) => {
-      scrolling.push(this.averageValue(el).toFixed(0));
-    });
-    pause.map((el) => {
-      avgWatchTime.push(this.averageValue(el).toFixed(0));
-    });
-    userLeave.map((el) => {
-      avgAbandone.push(this.averageValue(el).toFixed(0));
-    });
+    this.averageValuePush(scroll, scrollOut);
+    this.averageValuePush(formfocus, scrolling);
+    this.averageValuePush(pause, avgWatchTime);
+    this.averageValuePush(userLeave, avgAbandone);
 
     /*console.log("IS ACTIVE", isActiveView);
     console.log("AVG WATCH TIME",avgWatchTime);
@@ -185,11 +185,11 @@ class Data {
     console.log('INACTIVE USRS', inactiveViewsNumber);*/
 
     this.dataTransform(this.statistics.pageDomains, this.statistics.pageNames,
-      avgWatchTime, numberOfViews, sound, isActiveView, scrolling, avgAbandone);
+      avgWatchTime, numberOfViews, sound, isActiveView, scrolling, avgAbandone, scrollOut);
   };
 
   dataTransform(domain, pageName, avgWatchTime, numberOfViews,
-                sound, activeView, scrolling, avgAbandone){
+                sound, activeView, scrolling, avgAbandone, scrollOut){
 
     this.totalData = domain.map((s,i) => ({
       domain : s,
@@ -199,7 +199,8 @@ class Data {
       muted: sound[i],
       isActiveView: activeView[i],
       formFocus: scrolling[i],
-      averageAbandone: avgAbandone[i]
+      averageAbandone: avgAbandone[i],
+      scrollOut: scrollOut[i]
     }));
   };
 
@@ -223,7 +224,7 @@ class Data {
             <th scope="col">${el.numberViews}</th>
             <th scope="col">${el.muted}</th>
             <th scope="col">${el.isActiveView}</th>
-            <th scope="col">${this.toMinutes(el.formFocus)}</th>
+            <th scope="col">${this.toMinutes(el.scrollOut)}</th>
             <th scope="col">${this.toMinutes(el.averageAbandone)}</th>
           </tr>
         `
@@ -259,6 +260,16 @@ class Data {
     return this.timeLeftPart(avgWatchMinutes, '0', 2)+'m. '
       +' : '+this.timeLeftPart(avgWatchSeconds, '0', 2)+'s.';
   };
+
+  averageValuePush(mapArr, targetArr){
+    mapArr.map((el) => {
+      if(el.length){
+        targetArr.push(this.averageValue(el));
+      }else{
+        targetArr.push(0)
+      }
+    });
+  }
   /**HELPERS END**/
 
   init(){
@@ -267,7 +278,7 @@ class Data {
     this.eventsMapping(this.statistics.mergedEvents);
     this.calculation(this.globalEvents.playEvents, this.globalEvents.userleaveEvents, this.globalEvents.mutedEvents,
       this.globalEvents.unmutedEvents, this.globalEvents.pauseEvents, this.globalEvents.formfocusEvents,
-      this.statistics.viewedArray, this.statistics.inactiveUsers);
+      this.statistics.viewedArray, this.statistics.inactiveUsers, this.globalEvents.scrollOutEvents);
     this.renderStatistics(this.totalData);
 
     console.log('%cDATA: ', 'color: #00FF00', this.generalData);
