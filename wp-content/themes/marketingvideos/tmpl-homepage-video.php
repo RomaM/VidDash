@@ -67,8 +67,8 @@
                 <p class="content__title" id="video">Video</p>
             </div>
 
-            <div class="container">
-                <div class="chart">
+            <div class="container-fluid">
+                <div class="chart container">
                     <div class="chart__box">
                         <canvas id="avgTime" width="400" height="400"></canvas>
                     </div>
@@ -92,9 +92,9 @@
                     </div>
                 </div>
 
-                <h1 class="content__title">Engagement:</h1>
+                <h1 class="content__title">General statistics:</h1>
                 <div id="wrapper">
-                    <div class="table">
+                    <!--<div class="table">
                         <div class="table__header">
                             <div class="table__col table__header-domainname">Domain name</div>
                             <div class="table__col table__header-pagename">Page name</div>
@@ -105,7 +105,23 @@
                         <div id="tableBody" class="table__body">
 
                         </div>
-                    </div>
+                    </div>-->
+
+                    <table id="dataTable" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Domain name</th>
+                                <th scope="col">Page name</th>
+                                <th scope="col">Link</th>
+                                <th scope="col">Avg. Watch Time</th>
+                                <th scope="col">№ Views</th>
+                                <th scope="col">Sound</th>
+                                <th scope="col">Active view</th>
+                                <th scope="col">Scrolling</th>
+                                <th scope="col">Avg. abandone</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
 
                 <!--<?php
@@ -114,10 +130,12 @@
                     ?>-->
 
                 <script>
+                  var generalData = <?php echo $videoPages?>;
+                  let dataParsing = new Data(generalData);
+                  dataParsing.init();
+
                   var jsData = <?php echo $videoPages?>;
-                  let chartDashboard = new ChartData(
-                    jsData
-                  );
+                  let chartDashboard = new ChartData(jsData);
                   chartDashboard.init();
                 </script>
             </div>

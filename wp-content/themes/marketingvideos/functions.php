@@ -93,6 +93,10 @@ function page_assets_includes() {
         wp_register_script('chartjs-set', get_template_directory_uri().
             '/js/chart-settings.js', array('jquery','chartjs'), time(), false); // Custom scripts
         wp_enqueue_script('chartjs-set'); // Enqueue it!
+
+        wp_register_script('data', get_template_directory_uri().
+            '/js/data.js', array('jquery'), time(), false); // Custom scripts
+        wp_enqueue_script('data'); // Enqueue it!
     }
 }
 
