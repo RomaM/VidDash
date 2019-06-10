@@ -395,7 +395,7 @@ class Data {
 
     countriesArr.forEach((el, i) => {
       console.log('Location: ',el);
-      if(el !== null || el !== 'null' || el !== 'unknownLocation'){
+      if(el !== null && el !== 'null' && el !== 'unknownLocation'){
         domElementLocations.insertAdjacentHTML('beforeEnd',
           `
           <tr>
