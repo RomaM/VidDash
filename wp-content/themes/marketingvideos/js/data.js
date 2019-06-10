@@ -394,6 +394,7 @@ class Data {
     const domElementLocations = document.createElement('TBODY');
 
     countriesArr.forEach((el, i) => {
+      console.log('Location: ',el);
       if(el !== null || el !== 'null' || el !== 'unknownLocation'){
         domElementLocations.insertAdjacentHTML('beforeEnd',
           `
