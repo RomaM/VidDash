@@ -9,8 +9,13 @@
   background: white url("../img/loading.gif") no-repeat center;
 }
 
+.main-title{
+  margin-left: 5rem;
+  font-size: 32px;
+}
+
 .content{
-  padding-top: 70px;
+  padding-top: 55px;
   &__title{
     text-align: center;
     margin: 10px auto 30px auto;
@@ -25,6 +30,15 @@
       justify-content: center;
       max-width: 1300px;
       margin: 0 auto;
+    }
+  }
+
+  &__singlevalue{
+    font-size: 76px;
+    color: #8d22ff;
+    span{
+      font-size: 24px;
+      color: #7a7a7a;
     }
   }
 
@@ -47,6 +61,13 @@
 
 thead{
   font-weight: 700;
+}
+
+.statistics{
+  &__global{
+    display: flex;
+    justify-content: space-evenly;
+  }
 }
 
 .table{

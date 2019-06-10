@@ -6,6 +6,7 @@
         exit;
     }*/
     require_once('video-pages-list.php');
+    $charts = false; //variable for show/hide charts for separate page
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +33,7 @@
 <?php if( is_user_logged_in()){ ?>
     <div class="loading"></div>
     <div class="page">
-        <header class="header">
+        <header <?php if (!$charts) echo 'style="display: none"'?> class="header">
             <div class="container">
                 <div class="row">
                     <div class="header__filter">
@@ -61,17 +62,22 @@
         </header>
 
         <main class="content">
-            <div class="content__title-wrapper">
+            <p class="main-title">Video Dashboard</p>
+            <div <?php if (!$charts) echo 'style="display: none"'?> class="content__title-wrapper">
                 <p class="content__title" id="domain">Domain</p>
                 <p class="content__title" id="title">Page</p>
                 <p class="content__title" id="video">Video</p>
             </div>
 
             <div class="container-fluid">
-                <div class="chart container">
+                <div <?php if (!$charts) echo 'style="display: none"'?> class="chart container">
                     <div class="chart__box">
                         <canvas id="avgTime" width="400" height="400"></canvas>
                     </div>
+
+                    <!--<div class="chart__box">
+                        <canvas id="location" width="400" height="400"></canvas>
+                    </div>-->
 
                     <!--<div class="chart__box">
                         <canvas id="muted" width="400" height="400"></canvas>
@@ -91,6 +97,78 @@
                         <canvas id="orientation" width="400" height="400"></canvas>
                     </div>
                 </div>
+
+
+                <div class="statistics__global">
+                    <div>
+                        <h2 class="content__title">Failed:</h2>
+                        <div id="error" class="content__singlevalue"></div>
+                    </div>
+
+                    <div>
+                        <h2 class="content__title">Stopped playing:</h2>
+                        <div id="stalled" class="content__singlevalue"></div>
+                    </div>
+
+                    <div>
+                        <h2 class="content__title">Devices:</h2>
+                        <div class="container container-small">
+                            <table id="deviceTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Device Type</th>
+                                    <th scope="col">Amount</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="content__title">Browsers:</h2>
+                        <div class="container container-small">
+                            <table id="browserTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Browser Type</th>
+                                    <th scope="col">Amount</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="content__title">Orientation:</h2>
+                        <div class="container container-small">
+                            <table id="orientationTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Orientation Type</th>
+                                    <th scope="col">Amount</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="content__title">Distribution:</h2>
+                        <div class="container container-small">
+                            <table id="locationTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Country</th>
+                                    <th scope="col">Users</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+
 
                 <h1 class="content__title">General statistics:</h1>
                 <div id="wrapper">
@@ -112,13 +190,14 @@
                             <tr>
                                 <th scope="col">Domain name</th>
                                 <th scope="col">Page name</th>
-                                <th scope="col">Link</th>
+                                <th scope="col">Links</th>
                                 <th scope="col">Avg. Watch Time</th>
                                 <th scope="col">№ Views</th>
                                 <th scope="col">Sound</th>
                                 <th scope="col">Active view</th>
                                 <th scope="col">Scrolling</th>
-                                <th scope="col">Avg. abandone</th>
+                                <th scope="col">Converted</th>
+                                <th scope="col">Abandone (avg.)</th>
                             </tr>
                         </thead>
                     </table>
@@ -131,12 +210,13 @@
 
                 <script>
                   var generalData = <?php echo $videoPages?>;
-                  let dataParsing = new Data(generalData);
-                  dataParsing.init();
+                  var dataParsing = new Data(generalData);
+                  var chartDashboard = new ChartData(generalData);
 
-                  var jsData = <?php echo $videoPages?>;
-                  let chartDashboard = new ChartData(jsData);
-                  chartDashboard.init();
+                  dataParsing.init();
+                  <?php if ($charts) {?>
+                    chartDashboard.init();
+                  <?php }?>
                 </script>
             </div>
         </main>
