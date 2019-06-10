@@ -173,6 +173,9 @@ class ChartData{
       });
     });
 
+
+
+
     //mapping devices data to objects
     deviceNameArrCount.forEach((x) => {
       deviceObj[x] = (deviceObj[x] || 0) + 1
@@ -187,12 +190,15 @@ class ChartData{
     });
     //end
 
-    avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(0);
+   /* avgTimeTotal = ((avgWatchTime.reduce((a, b) => a + b)) / avgWatchTime.length).toFixed(0);*/
 
     //mapping devices data in arrays for charts
     this.objsNumToTypesMap(deviceObj, deviceNumbers, deviceTypes);
     this.objsNumToTypesMap(browserObj, browserNumbers, browserTypes);
     this.objsNumToTypesMap(orientationObj, orientationNumbers, orientationTypes);
+
+
+    console.log('BROWSERS',browserArrCount );
 
     //viewed count dates array
     this.chartData.viewedArr.map((viewed) => {
@@ -291,6 +297,12 @@ class ChartData{
         }]
       },
       options: {
+        plugins: {
+          labels: {
+            render: 'value'
+          },
+        },
+
         scales: {
           yAxes: [{
             scaleLabel: {
