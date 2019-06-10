@@ -57,7 +57,7 @@ class Data {
   //main object parsing
   parseGlobalObject(data){
     Object.keys(data).map((obj, i) => {
-      if(data.length == 0){
+      if(data.length === 0){
         this.noEntriesMessage();
         return false
       }
@@ -394,13 +394,15 @@ class Data {
     const domElementLocations = document.createElement('TBODY');
 
     countriesArr.forEach((el, i) => {
-      domElementLocations.insertAdjacentHTML('beforeEnd',
-        `
-        <tr>
-            <th scope="col">${el}</th>
-            <th scope="col">${percentsArr[i].toFixed(0)}%</th>
-        </tr>
-      `);
+      if(el !== null || el !== 'null' || el !== 'unknownLocation'){
+        domElementLocations.insertAdjacentHTML('beforeEnd',
+          `
+          <tr>
+              <th scope="col">${el}</th>
+              <th scope="col">${percentsArr[i].toFixed(0)}%</th>
+          </tr>
+        `);
+      }
     });
 
     tableLocations.appendChild(domElementLocations);
