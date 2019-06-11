@@ -117,6 +117,7 @@ function create_api_posts_meta_field() {
     );
 }
 
+
 function get_post_meta_for_api( $object, $field_name, $request ) {
     $post_id = $object['id'];
     $meta = get_post_meta( $post_id, 'meta-field' );
@@ -154,7 +155,15 @@ function do_raw_shortcodes( $object, $field_name, $request ){
 function add_cors_http_header(){
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: Authorization, Content-Type");
-}
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, PATCH");
+};
+
+
+/*add_filter( 'rest_endpoints', 'show_default_endpoints' );
+function show_default_endpoints( $endpoints ) {
+    var_export( array_keys( $endpoints ) );
+    die;
+}*/
 
 /*increasing max posts per page limit*/
 add_filter( 'rest_post_collection_params', 'big_json_change_post_per_page', 10, 1 );
@@ -164,6 +173,15 @@ function big_json_change_post_per_page( $params ) {
     }
     return $params;
 }
+/*end*/
+
+/*prevent authors role to delete posts*/
+function wpb_change_author_role(){
+    global $wp_roles;
+    $wp_roles->remove_cap( 'author', 'delete_posts' );
+    $wp_roles->remove_cap( 'author', 'delete_published_posts' );
+}
+add_action('init', 'wpb_change_author_role');
 /*end*/
 
 add_action('init','add_cors_http_header');
