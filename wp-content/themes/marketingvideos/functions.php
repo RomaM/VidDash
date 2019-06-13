@@ -58,6 +58,7 @@ add_action('wp_footer', 'my_deregister_scripts');
 function page_assets_includes() {
     if ($GLOBALS['pagenow'] != 'wp-login.php' && !is_admin()) {
 
+        //add logo for login page
         function custom_logo() { ?>
             <style type="text/css">
                 #login h1 a, .login h1 a {
@@ -65,42 +66,17 @@ function page_assets_includes() {
                 }
             </style>
         <?php }
-
         add_action( 'login_enqueue_scripts', 'custom_logo' );
 
+        //main styles
         wp_register_style('theme_styles', get_template_directory_uri().
             '/style.css', array(), time(), 'all');
         wp_enqueue_style('theme_styles'); // Enqueue it!
 
-        wp_register_style('bootstrap_styles',
-            "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
-            array(), time(), 'all');
-        wp_enqueue_style('bootstrap_styles');
-
-        wp_register_script('bootstrap_js',
-            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js",
-            array('jquery'), time());
-        wp_enqueue_script('bootstrap_js');
-
-        wp_register_script('html5blankscripts', get_template_directory_uri().
-            '/js/scripts.js', array('jquery'), time()); // Custom scripts
-        wp_enqueue_script('html5blankscripts'); // Enqueue it!
-
-        wp_register_script('chartjs', get_template_directory_uri().
-            '/js/Chart.min.js', array('jquery'), time()); // Custom scripts
-        wp_enqueue_script('chartjs'); // Enqueue it!
-
-        wp_register_script('chartjs-set', get_template_directory_uri().
-            '/js/chart-settings.js', array('jquery','chartjs'), time(), false); // Custom scripts
-        wp_enqueue_script('chartjs-set'); // Enqueue it!
-
-        wp_register_script('chart-labels', get_template_directory_uri().
-            '/js/chartjs-labels.js', array('jquery'), time(), false); // Custom scripts
-        wp_enqueue_script('chart-labels'); // Enqueue it!
-
-        wp_register_script('data', get_template_directory_uri().
-            '/js/data.js', array('jquery'), time(), false); // Custom scripts
-        wp_enqueue_script('data'); // Enqueue it!
+        //general statistics file
+        wp_register_script('OLD-general-statistics', get_template_directory_uri().
+            '/js/OLD-general-statistics.js', array(), time(), false); // Custom scripts
+        wp_enqueue_script('OLD-general-statistics'); // Enqueue it!
     }
 }
 
@@ -117,7 +93,6 @@ function create_api_posts_meta_field() {
     );
 }
 
-
 function get_post_meta_for_api( $object, $field_name, $request ) {
     $post_id = $object['id'];
     $meta = get_post_meta( $post_id, 'meta-field' );
@@ -129,6 +104,7 @@ function update_post_meta_for_api( $value, $object, $field_name ) {
     return add_post_meta( $object->ID, 'meta-field' ,$value );
 }
 /*end meta field*/
+
 
 /*adding custom field for reading raw content data*/
 add_action( 'rest_api_init', function () {
@@ -152,18 +128,15 @@ function do_raw_shortcodes( $object, $field_name, $request ){
 }
 /*end*/
 
+
+/*allowing headers and request methods*/
 function add_cors_http_header(){
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: Authorization, Content-Type");
     header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, PATCH");
 };
+/**/
 
-
-/*add_filter( 'rest_endpoints', 'show_default_endpoints' );
-function show_default_endpoints( $endpoints ) {
-    var_export( array_keys( $endpoints ) );
-    die;
-}*/
 
 /*increasing max posts per page limit*/
 add_filter( 'rest_post_collection_params', 'big_json_change_post_per_page', 10, 1 );
@@ -175,14 +148,16 @@ function big_json_change_post_per_page( $params ) {
 }
 /*end*/
 
+
 /*prevent authors role to delete posts*/
-function wpb_change_author_role(){
+function change_author_role(){
     global $wp_roles;
     $wp_roles->remove_cap( 'author', 'delete_posts' );
     $wp_roles->remove_cap( 'author', 'delete_published_posts' );
 }
-add_action('init', 'wpb_change_author_role');
+add_action('init', 'change_author_role');
 /*end*/
+
 
 add_action('init','add_cors_http_header');
 add_filter('flush_rewrite_rules_hard','__return_false');

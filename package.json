@@ -15,7 +15,6 @@
   "homepage": "https://github.com/BlackrockM/",
   "devDependencies": {
     "del": "^3.0.0",
-    "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-cached": "^1.1.1",
     "gulp-changed": "^3.2.0",
