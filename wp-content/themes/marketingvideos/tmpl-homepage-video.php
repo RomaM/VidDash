@@ -27,6 +27,8 @@
     <meta name="theme-color" content="#ffffff">
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <?php wp_head(); ?>
+
+	<script type="module" src="<?php echo get_template_directory_uri(); ?>/js/general-statistics.js"></script>
 </head>
 
 <body <?php is_user_logged_in() ?  body_class() : body_class("login wp-core-ui"); ?>>
