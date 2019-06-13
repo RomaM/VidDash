@@ -93,7 +93,6 @@ function create_api_posts_meta_field() {
     );
 }
 
-
 function get_post_meta_for_api( $object, $field_name, $request ) {
     $post_id = $object['id'];
     $meta = get_post_meta( $post_id, 'meta-field' );
@@ -105,6 +104,7 @@ function update_post_meta_for_api( $value, $object, $field_name ) {
     return add_post_meta( $object->ID, 'meta-field' ,$value );
 }
 /*end meta field*/
+
 
 /*adding custom field for reading raw content data*/
 add_action( 'rest_api_init', function () {
@@ -128,6 +128,7 @@ function do_raw_shortcodes( $object, $field_name, $request ){
 }
 /*end*/
 
+
 /*allowing headers and request methods*/
 function add_cors_http_header(){
     header("Access-Control-Allow-Origin: *");
@@ -135,6 +136,7 @@ function add_cors_http_header(){
     header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, PATCH");
 };
 /**/
+
 
 /*increasing max posts per page limit*/
 add_filter( 'rest_post_collection_params', 'big_json_change_post_per_page', 10, 1 );
@@ -146,6 +148,7 @@ function big_json_change_post_per_page( $params ) {
 }
 /*end*/
 
+
 /*prevent authors role to delete posts*/
 function change_author_role(){
     global $wp_roles;
@@ -154,6 +157,7 @@ function change_author_role(){
 }
 add_action('init', 'change_author_role');
 /*end*/
+
 
 add_action('init','add_cors_http_header');
 add_filter('flush_rewrite_rules_hard','__return_false');
