@@ -45,8 +45,6 @@ class Data {
   };
 
   chartData = {
-    /*ctxLocation: document.getElementById('location').getContext('2d'),*/
-    locationChart: '',
     userLocationNumbers: [],
     userLocationCountries: [],
     userLocationPercentage: []
@@ -56,6 +54,7 @@ class Data {
 
   //main object parsing
   parseGlobalObject(data){
+    console.log('General data: ', data);
     Object.keys(data).map((obj, i) => {
       if(data.length === 0){
         this.noEntriesMessage();
@@ -68,6 +67,8 @@ class Data {
       this.statistics.pageDomains.push(pageDomain);
       this.statistics.pageNames.push(pageName);
       this.statistics.eventArr[i].push(data[obj].date);
+
+
     });
   };
 
@@ -349,7 +350,7 @@ class Data {
         `
       )
     });
-    wrapper.appendChild(domElement);
+    //wrapper.appendChild(domElement);
   }
 
   //render bottom table
@@ -378,14 +379,14 @@ class Data {
         `
       )
     });
-    table.appendChild(domElement);
+    //table.appendChild(domElement);
   };
 
 
   renderGlobalPercentage(data, dom){
     const domElement = document.createElement('DIV');
     domElement.insertAdjacentHTML('beforeEnd', `${data.toFixed(0)}<span>%</span>`);
-    dom.appendChild(domElement);
+    //dom.appendChild(domElement);
   };
 
   //render locations table
@@ -406,7 +407,7 @@ class Data {
       }
     });
 
-    tableLocations.appendChild(domElementLocations);
+    //tableLocations.appendChild(domElementLocations);
   };
 
   /**HELPERS**/
