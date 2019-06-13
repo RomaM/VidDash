@@ -1,6 +1,6 @@
 import DataMethods from './data-methods.js';
 
-export default window.GeneralStatistics = class {
+window.GeneralStatistics = class {
   constructor(rawData) {
     this.rawData = rawData;
     this.generalData = {
@@ -10,5 +10,6 @@ export default window.GeneralStatistics = class {
 
   init() {
     DataMethods.logger('General Statistics');
+    DataMethods.logger(DataMethods.avgAmount(['1', '2', '3', 4, 5]));
   }
 }

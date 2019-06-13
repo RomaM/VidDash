@@ -45,5 +45,12 @@
 <?php }else {
     get_template_part( 'includes/login' );
 }?>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const instance = new GeneralStatistics('Data');
+    instance.init();
+	});
+</script>
 </body>
 </html>
