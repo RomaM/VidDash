@@ -54,7 +54,6 @@ class Data {
 
   //main object parsing
   parseGlobalObject(data){
-    console.log('General data: ', data);
     Object.keys(data).map((obj, i) => {
       if(data.length === 0){
         this.noEntriesMessage();

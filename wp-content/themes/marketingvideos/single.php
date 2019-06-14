@@ -6,6 +6,7 @@
  * @subpackage Twenty_Fifteen
  * @since Twenty Fifteen 1.0
  */
+get_header();
 ?>
 
 <?php while ( have_posts() ) : the_post();
