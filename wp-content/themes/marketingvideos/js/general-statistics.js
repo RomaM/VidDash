@@ -24,6 +24,7 @@ window.GeneralStatistics = class {
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
       const pageResult = pageInstance.init();
+
       this.pagesData[i] = {
         name: pageResult.name,
         link: pageResult.link,
@@ -37,6 +38,6 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
-    /*  */
+    DataMethods.logger(this.rawData, 'obj');
   }
 }
