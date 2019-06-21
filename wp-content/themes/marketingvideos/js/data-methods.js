@@ -27,8 +27,8 @@ export default class DataMethods {
 
   // Method: Calculate an average data from an array
   static avgAmount(arrToAvg) {
-    let sum;
-    sum = arrToAvg.reduce((acc, el) => {return acc + parseInt(el, 10)}, 0);
+    (arrToAvg.length > 0) ? arrToAvg : arrToAvg = [0];
+    let sum = arrToAvg.reduce((acc, el) => {return acc + parseInt(el, 10)}, 0);
     return sum / arrToAvg.length;
   }
 
@@ -46,6 +46,12 @@ export default class DataMethods {
     measuredTime.setSeconds(Math.round(number));
     return measuredTime.toISOString().substr(11, 8);
 
+  }
+
+  static toDate(string = '1.1.1111') {
+    let formatted = string.split('.');
+    formatted = new Date(formatted[2], formatted[1]-1, formatted[0]);
+    return formatted;
   }
 
 }

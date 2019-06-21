@@ -4,13 +4,13 @@ import PageStatistics from './page-statistics.js';
 window.GeneralStatistics = class {
   constructor(rawData) {
     this.rawData = rawData;
-    this.generalStatistics = {
-      locations: [{}],
-      devices: [{}],
-      browsers: [{}],
-      failed: [{}],
-      stalled: [{}]
-    }
+    // this.generalStatistics = {
+    //   locations: [{}],
+    //   devices: [{}],
+    //   browsers: [{}],
+    //   failed: [{}],
+    //   stalled: [{}]
+    // }
     this.pagesData = [];
   }
 
@@ -25,11 +25,7 @@ window.GeneralStatistics = class {
       const pageInstance = new PageStatistics(obj, data[obj]);
       const pageResult = pageInstance.init();
 
-      this.pagesData[i] = {
-        name: pageResult.name,
-        link: pageResult.link,
-        //-//-//-//-//-//
-      }
+      this.pagesData[i] = pageResult;
     });
     return true;
   }
@@ -38,6 +34,8 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
-    DataMethods.logger(this.rawData, 'obj');
+    DataMethods.logger(this.pagesData, 'obj');
   }
+
+
 }

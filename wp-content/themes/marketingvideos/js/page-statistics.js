@@ -17,7 +17,7 @@ class ProcessedData {
 
 // Class: Basic class for a page statistics
 export default window.PageStatistics = class {
-  constructor(videoPage, videoPageData) {// todo: Add a parameter (an array [from, to]) to parsing by dates
+  constructor(videoPage, videoPageData) {
     this.videoPage = videoPage;
     this.videoPageData = videoPageData;
     this.pageStatistics = {
@@ -37,22 +37,22 @@ export default window.PageStatistics = class {
   }
 
   // Method: Parse raw info about single page
-  pageData(rawData) { // todo: Include parsing dates parameter
+  pageData(rawData, filterDates = []) {
     let localProcessedData = {};
     let processedEvents = {};
     let timeArrs = {
-      activeView: [0],
-      watchTimeArr: [0],
-      scrollTimeArr: [0],
-      convertedTimeArr: [0],
-      abandonmentTimeArr: [0]
-    }
+      activeView: [],
+      watchTimeArr: [],
+      scrollTimeArr: [],
+      convertedTimeArr: [],
+      abandonmentTimeArr: []
+    };
 
-    Object.keys(rawData).map((obj, i) => {
+    Object.keys(rawData).map(obj => {
       if (obj == 'duration' && this.pageStatistics.vDuration.length === 0) {
         this.pageStatistics.vDuration = DataMethods.toTime(rawData[obj]);
       } else if (obj == 'date') {
-        Object.keys(rawData[obj]).map((currDate, i) => {
+        Object.keys(rawData[obj]).map(currDate => {
           localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, 0, 0, 0, 0, 0);
           localProcessedData.date = currDate;
 
@@ -85,19 +85,18 @@ export default window.PageStatistics = class {
             timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
           });
 
-          localProcessedData.avgActiveView = DataMethods.toTime(DataMethods.avgAmount(timeArrs.activeView));
-          localProcessedData.avgWatchTime = DataMethods.toTime(DataMethods.avgAmount(timeArrs.watchTimeArr));
-          localProcessedData.avgScrollTime = DataMethods.toTime(DataMethods.avgAmount(timeArrs.scrollTimeArr));
-          localProcessedData.avgConvertedTime = DataMethods.toTime(DataMethods.avgAmount(timeArrs.convertedTimeArr));
-          localProcessedData.avgAbandonmentTime = DataMethods.toTime(DataMethods.avgAmount(timeArrs.abandonmentTimeArr));
-
+          localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
+          localProcessedData.avgWatchTime = DataMethods.avgAmount(timeArrs.watchTimeArr);
+          localProcessedData.avgScrollTime = DataMethods.avgAmount(timeArrs.scrollTimeArr);
+          localProcessedData.avgConvertedTime = DataMethods.avgAmount(timeArrs.convertedTimeArr);
+          localProcessedData.avgAbandonmentTime = DataMethods.avgAmount(timeArrs.abandonmentTimeArr);
 
           this.pageStatistics.dates.push(localProcessedData);
         });
-
-        DataMethods.logger(this.pageStatistics, 'obj');
       }
     });
+
+    return this.pageStatistics;
   }
 
   // Method: Parse list of events for a single UID
@@ -165,11 +164,51 @@ export default window.PageStatistics = class {
     return processed;
   }
 
+  // Method: Summarize by filter dates
+  recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
+    let summarizedData = new ProcessedData([], 0, 0, {}, 0, 0, 0, 0, 0);
+    if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
+      const dFrom = DataMethods.toDate(filterDates[0]);
+      const dTo = DataMethods.toDate(filterDates[1]);
+
+      processedData['dates'].map(el => {
+        let elDate = DataMethods.toDate(el.date);
+
+        DataMethods.logger(elDate >= dFrom && elDate <= dTo);
+
+        if(elDate >= dFrom && elDate <= dTo) {
+
+          summarizedData.date.push(el.date);
+          summarizedData.viewers += el.viewers;
+          summarizedData.visitors += el.visitors;
+
+          Object.keys(el.locations).map(location => {
+            if(summarizedData.locations.hasOwnProperty(location)) summarizedData.locations[location] += el.locations[location];
+            else summarizedData.locations[location] = 1
+          });
+
+          summarizedData.avgWatchTime += el.avgWatchTime;
+          summarizedData.avgScrollTime += el.avgScrollTime;
+          summarizedData.avgActiveView += el.avgActiveView;
+          summarizedData.avgConvertedTime += el.avgConvertedTime;
+          summarizedData.avgAbandonmentTime += el.avgAbandonmentTime;
+        }
+      });
+
+      if (summarizedData.date.length > 0) {
+        summarizedData.avgWatchTime = DataMethods.toTime(summarizedData.avgWatchTime / summarizedData.date.length);
+        summarizedData.avgScrollTime = DataMethods.toTime(summarizedData.avgScrollTime / summarizedData.date.length);
+        summarizedData.avgActiveView = DataMethods.toTime(summarizedData.avgActiveView / summarizedData.date.length);
+        summarizedData.avgConvertedTime = DataMethods.toTime(summarizedData.avgConvertedTime / summarizedData.date.length);
+        summarizedData.avgAbandonmentTime = DataMethods.toTime(summarizedData.avgAbandonmentTime / summarizedData.date.length);
+      }
+    }
+    return (summarizedData.date.length > 0) ? summarizedData : null;
+  }
+
   // Method: Main launching method
   init() {
     this.pageInfo(this.videoPage);
-    this.pageData(this.videoPageData);
-
-    return this.pageStatistics;
+    return this.recalculateByFilters(this.pageData(this.videoPageData));
   }
 }
