@@ -1,5 +1,6 @@
 import DataMethods from './data-methods.js';
 import PageStatistics from './page-statistics.js';
+import TabulatorMethods from './tabulator-methods.js';
 
 window.GeneralStatistics = class {
   constructor(rawData) {
@@ -37,6 +38,8 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
+    const tabulator = new TabulatorMethods();
+    tabulator.init();
     /*  */
   }
 }

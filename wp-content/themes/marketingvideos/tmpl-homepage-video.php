@@ -9,7 +9,10 @@
 <?php if( is_user_logged_in()){ ?>
     <div class="page">
 
+
+
         <?php $videoPages = json_encode($videoPages)?>
+        <div id="table-wrapper"></div>
 
         <script>
           var generalData = <?php echo $videoPages?>;
