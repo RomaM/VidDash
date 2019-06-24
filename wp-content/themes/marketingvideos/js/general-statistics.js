@@ -5,13 +5,13 @@ import TabulatorMethods from './tabulator-methods.js';
 window.GeneralStatistics = class {
   constructor(rawData) {
     this.rawData = rawData;
-    this.generalStatistics = {
-      locations: [{}],
-      devices: [{}],
-      browsers: [{}],
-      failed: [{}],
-      stalled: [{}]
-    }
+    // this.generalStatistics = {
+    //   locations: [{}],
+    //   devices: [{}],
+    //   browsers: [{}],
+    //   failed: [{}],
+    //   stalled: [{}]
+    // }
     this.pagesData = [];
   }
 
@@ -25,11 +25,8 @@ window.GeneralStatistics = class {
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
       const pageResult = pageInstance.init();
-      this.pagesData[i] = {
-        name: pageResult.name,
-        link: pageResult.link,
-        //-//-//-//-//-//
-      }
+
+      this.pagesData[i] = pageResult;
     });
     return true;
   }
@@ -38,8 +35,11 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
+    DataMethods.logger(this.pagesData, 'obj');
     const tabulator = new TabulatorMethods();
     tabulator.init();
     /*  */
   }
+
+
 }
