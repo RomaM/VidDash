@@ -2,11 +2,14 @@ import DataMethods from './data-methods.js';
 
 // Model: A model for a single date with necessary data
 class ProcessedData {
-  constructor(date, viewers, visitors, locations, muted, failed, stopped, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
+  constructor(date, viewers, visitors, locations, device, browser, orientation, muted, failed, stopped, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
     this.date = date;
     this.viewers = viewers;
     this.visitors = visitors;
     this.locations = locations;
+    this.device = device;
+    this.browser = browser;
+    this.orientation = orientation;
     this.muted = muted;
     this.failed = failed;
     this.stopped = stopped;
@@ -51,6 +54,7 @@ export default window.PageStatistics = class {
 
     events.map(single => {
       processed.devices.add(single['device']);
+
       switch (single['event']) {
         case ('play'):
           break;
@@ -91,6 +95,8 @@ export default window.PageStatistics = class {
       }
     });
 
+    // DataMethods.logger(processed.devices, 'obj');
+
     processed.abandonment = processed.abandonment / 1000;
     return processed;
   }
@@ -114,15 +120,16 @@ export default window.PageStatistics = class {
     };
 
     Object.keys(rawData).map(obj => {
-      if (obj == 'duration' && this.pageStatistics.vDuration.length === 0) {
+      if (obj == 'duration' && this.pageStatistics.vDuration == 0) {
         this.pageStatistics.vDuration = DataMethods.toTime(rawData[obj]);
       } else if (obj == 'date') {
         Object.keys(rawData[obj]).map(currDate => {
-          localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, [], 0, 0, 0, 0, 0, 0, 0);
+          localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, [], [], [], [], 0, 0, 0, 0, 0, 0, 0);
           localProcessedData.date = currDate;
 
           Object.keys(rawData[obj][currDate]['uids']).map((currUser) => {
             let currLocation = rawData[obj][currDate]['uids'][currUser]['location'];
+
             /* Get events statistic per a user*/
             processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
 
@@ -139,6 +146,8 @@ export default window.PageStatistics = class {
             } else {
               localProcessedData.locations[currLocation] = 1;
             }
+
+
 
             if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
 
@@ -173,7 +182,7 @@ export default window.PageStatistics = class {
 
   // Method: Summarize by filter dates
   recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
-    let summarizedData = new ProcessedData([], 0, 0, {}, [0, 0], 0, 0, 0, 0, 0, 0, 0);
+    let summarizedData = new ProcessedData([], 0, 0, {}, [], [], [], [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
       const dFrom = DataMethods.toDate(filterDates[0]);
       const dTo = DataMethods.toDate(filterDates[1]);
@@ -210,7 +219,7 @@ export default window.PageStatistics = class {
       if (summarizedData.date.length > 0) {
         if (summarizedData.muted[0] > 0) {
           // Percentage of visitors to muted users
-          summarizedData.muted['0'] = DataMethods.toPercent(summarizedData.muted['0'], summarizedData.visitors);
+          summarizedData.muted['0'] = DataMethods.toPercent(summarizedData.muted['0'], summarizedData.viewers);
           // Average viewed time before muted
           summarizedData.muted['1'] = DataMethods.toTime(summarizedData.muted['1'] / summarizedData.muted['0']);
         }
@@ -225,6 +234,11 @@ export default window.PageStatistics = class {
         summarizedData.avgAbandonmentTime = DataMethods.toTime(summarizedData.avgAbandonmentTime / summarizedData.date.length);
       }
     }
+    summarizedData.pDomain = processedData.pDomain;
+    summarizedData.pName = processedData.pName;
+    summarizedData.pVideo = processedData.pVideo;
+    summarizedData.pLink = processedData.pLink;
+    summarizedData.vDuration = processedData.vDuration;
     return (summarizedData.date.length > 0) ? summarizedData : null;
   }
 
