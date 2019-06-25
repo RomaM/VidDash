@@ -54,4 +54,8 @@ export default class DataMethods {
     return formatted;
   }
 
+  static toPercent(amount, quantity) {
+    const percentage = Math.round((amount / quantity) * 100);
+    return percentage;
+  }
 }

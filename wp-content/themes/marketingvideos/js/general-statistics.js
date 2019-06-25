@@ -4,13 +4,6 @@ import PageStatistics from './page-statistics.js';
 window.GeneralStatistics = class {
   constructor(rawData) {
     this.rawData = rawData;
-    // this.generalStatistics = {
-    //   locations: [{}],
-    //   devices: [{}],
-    //   browsers: [{}],
-    //   failed: [{}],
-    //   stalled: [{}]
-    // }
     this.pagesData = [];
   }
 
@@ -36,6 +29,5 @@ window.GeneralStatistics = class {
 
     DataMethods.logger(this.pagesData, 'obj');
   }
-
 
 }

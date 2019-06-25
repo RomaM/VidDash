@@ -2,11 +2,14 @@ import DataMethods from './data-methods.js';
 
 // Model: A model for a single date with necessary data
 class ProcessedData {
-  constructor(date, viewers, visitors, locations, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
+  constructor(date, viewers, visitors, locations, muted, failed, stopped, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
     this.date = date;
     this.viewers = viewers;
     this.visitors = visitors;
     this.locations = locations;
+    this.muted = muted;
+    this.failed = failed;
+    this.stopped = stopped;
     this.avgActiveView = avgActiveView;
     this.avgWatchTime = avgWatchTime;
     this.avgScrollTime = avgScrollTime;
@@ -30,6 +33,68 @@ export default window.PageStatistics = class {
     }
   }
 
+  // Method: Parse list of events for a single UID
+  parseEvents(events) {
+    const processed = {
+      watchTime: 0,
+      muted: [false, 0],
+      activeView: 0,
+      scrolling: [false, 0],
+      vertical: false,
+      horizontal: false,
+      converted: [false, 0],
+      abandonment: 0,
+      devices: new Set(),
+      failed: false,
+      stopped: false
+    };
+
+    events.map(single => {
+      processed.devices.add(single['device']);
+      switch (single['event']) {
+        case ('play'):
+          break;
+        case ('pause'):
+          break;
+        case ('userLeave'):
+          if (processed.activeView == 0) processed.activeView = single['videoTime'];
+          processed.watchTime = single['videoTime'];
+          processed.abandonment = single['timestamp'];
+          break;
+        case ('muted'):
+          if (processed.muted[0] == false) processed.muted = [true, single['videoTime']]
+          break;
+        case ('unmuted'):
+          break;
+        case ('formfocus'):
+          if (processed.activeView == 0) processed.activeView = single['videoTime'];
+          break;
+        case ('ScrollOut'):
+          if (processed.activeView == 0) processed.activeView = single['videoTime'];
+          if (processed.scrolling[0] == false) processed.scrolling = [true, single['videoTime']];
+          break;
+        case ('submit'):
+          if (processed.activeView == 0) processed.activeView = single['videoTime'];
+          processed.watchTime = single['videoTime'];
+          processed.converted = [true, single['videoTime']];
+          processed.abandonment = single['timestamp'];
+          break;
+        case ('error'):
+          if (processed.failed == false) processed.failed = true;
+        case ('abort'):
+        case ('emptied'):
+        case ('stalled'):
+          if (processed.stopped == false) processed.stopped = true;
+          break;
+        default:
+          break;
+      }
+    });
+
+    processed.abandonment = processed.abandonment / 1000;
+    return processed;
+  }
+
   // Method: Get main page info
   pageInfo(rawString) {
     let data = rawString.split('|');
@@ -37,7 +102,7 @@ export default window.PageStatistics = class {
   }
 
   // Method: Parse raw info about single page
-  pageData(rawData, filterDates = []) {
+  pageData(rawData) {
     let localProcessedData = {};
     let processedEvents = {};
     let timeArrs = {
@@ -53,11 +118,19 @@ export default window.PageStatistics = class {
         this.pageStatistics.vDuration = DataMethods.toTime(rawData[obj]);
       } else if (obj == 'date') {
         Object.keys(rawData[obj]).map(currDate => {
-          localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, 0, 0, 0, 0, 0);
+          localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, [], 0, 0, 0, 0, 0, 0, 0);
           localProcessedData.date = currDate;
 
-          Object.keys(rawData[obj][currDate]['uids']).map((currUser, i) => {
+          Object.keys(rawData[obj][currDate]['uids']).map((currUser) => {
             let currLocation = rawData[obj][currDate]['uids'][currUser]['location'];
+            /* Get events statistic per a user*/
+            processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
+
+            localProcessedData.visitors++;
+            if (processedEvents.watchTime > 0) {
+              localProcessedData.viewers++;
+              timeArrs.watchTimeArr.push(processedEvents.watchTime);
+            }
 
             if (currLocation == null || currLocation == 'unknownLocation') {
               localProcessedData.locations['unknownLocation']++;
@@ -67,14 +140,11 @@ export default window.PageStatistics = class {
               localProcessedData.locations[currLocation] = 1;
             }
 
-            processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
+            if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
 
-            localProcessedData.visitors++;
+            if (processedEvents.failed == true) localProcessedData.failed++;
 
-            if (processedEvents.watchTime > 0) {
-              localProcessedData.viewers++;
-              timeArrs.watchTimeArr.push(processedEvents.watchTime);
-            }
+            if (processedEvents.stopped == true) localProcessedData.stopped++;
 
             if (processedEvents.scrolling[0]) timeArrs.scrollTimeArr.push(processedEvents.scrolling[1]);
 
@@ -83,6 +153,8 @@ export default window.PageStatistics = class {
             if (processedEvents.activeView > 0) timeArrs.activeView.push(processedEvents.activeView);
 
             timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
+
+            localProcessedData.failed += processedEvents.failed;
           });
 
           localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
@@ -99,82 +171,15 @@ export default window.PageStatistics = class {
     return this.pageStatistics;
   }
 
-  // Method: Parse list of events for a single UID
-  parseEvents(events) {
-    const processed = {
-      watchTime: 0,
-      soundMute: [false, 0],
-      activeView: 0,
-      scrolling: [false, 0],
-      vertical: false,
-      horizontal: false,
-      converted: [false, 0],
-      abandonment: 0,
-      devices: new Set()
-    };
-
-    events.map(single => {
-      processed.devices.add(single['device']);
-      switch (single['event']) {
-        case ('play'):
-          break;
-        case ('pause'):
-          break;
-        case ('userLeave'):
-          if (processed.activeView == 0) {
-            processed.activeView = single['videoTime'];
-          }
-          processed.watchTime = single['videoTime'];
-          processed.abandonment = single['timestamp'];
-          break;
-        case ('muted'):
-          if (processed.soundMute[0] == false) {
-            processed.soundMute = [true, single['videoTime']]
-          }
-          break;
-        case ('unmuted'):
-          break;
-        case ('formfocus'):
-          if (processed.activeView == 0) {
-            processed.activeView = single['videoTime'];
-          }
-          break;
-        case ('ScrollOut'):
-          if (processed.activeView == 0) {
-            processed.activeView = single['videoTime'];
-          }
-          if (processed.scrolling[0] == false) {
-            processed.scrolling = [true, single['videoTime']];
-          }
-          break;
-        case ('submit'):
-          if (processed.activeView == 0) {
-            processed.activeView = single['videoTime'];
-          }
-          processed.watchTime = single['videoTime'];
-          processed.converted = [true, single['videoTime']];
-          processed.abandonment = single['timestamp'];
-          break;
-        default:
-          break;
-      }
-    });
-
-    processed.abandonment = processed.abandonment / 1000;
-    return processed;
-  }
-
   // Method: Summarize by filter dates
   recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
-    let summarizedData = new ProcessedData([], 0, 0, {}, 0, 0, 0, 0, 0);
+    let summarizedData = new ProcessedData([], 0, 0, {}, [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
       const dFrom = DataMethods.toDate(filterDates[0]);
       const dTo = DataMethods.toDate(filterDates[1]);
 
       processedData['dates'].map(el => {
         let elDate = DataMethods.toDate(el.date);
-
-        DataMethods.logger(elDate >= dFrom && elDate <= dTo);
 
         if(elDate >= dFrom && elDate <= dTo) {
 
@@ -187,6 +192,13 @@ export default window.PageStatistics = class {
             else summarizedData.locations[location] = 1
           });
 
+          el.muted.map(singleMute => {
+            summarizedData.muted['0']++; // Amount of muted users
+            summarizedData.muted['1'] += singleMute['1']; // Average of muted time
+          });
+
+          summarizedData.stopped += el.stopped;
+          summarizedData.failed += el.failed;
           summarizedData.avgWatchTime += el.avgWatchTime;
           summarizedData.avgScrollTime += el.avgScrollTime;
           summarizedData.avgActiveView += el.avgActiveView;
@@ -196,6 +208,16 @@ export default window.PageStatistics = class {
       });
 
       if (summarizedData.date.length > 0) {
+        if (summarizedData.muted[0] > 0) {
+          // Percentage of visitors to muted users
+          summarizedData.muted['0'] = DataMethods.toPercent(summarizedData.muted['0'], summarizedData.visitors);
+          // Average viewed time before muted
+          summarizedData.muted['1'] = DataMethods.toTime(summarizedData.muted['1'] / summarizedData.muted['0']);
+        }
+
+        if (summarizedData.stopped > 0) {summarizedData.stopped = DataMethods.toPercent(summarizedData.stopped, summarizedData.visitors)};
+        if (summarizedData.failed > 0) {summarizedData.failed = DataMethods.toPercent(summarizedData.failed, summarizedData.visitors)};
+
         summarizedData.avgWatchTime = DataMethods.toTime(summarizedData.avgWatchTime / summarizedData.date.length);
         summarizedData.avgScrollTime = DataMethods.toTime(summarizedData.avgScrollTime / summarizedData.date.length);
         summarizedData.avgActiveView = DataMethods.toTime(summarizedData.avgActiveView / summarizedData.date.length);
