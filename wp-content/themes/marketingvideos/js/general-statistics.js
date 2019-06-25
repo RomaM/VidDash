@@ -5,13 +5,6 @@ import TabulatorMethods from './tabulator-methods.js';
 window.GeneralStatistics = class {
   constructor(rawData) {
     this.rawData = rawData;
-    // this.generalStatistics = {
-    //   locations: [{}],
-    //   devices: [{}],
-    //   browsers: [{}],
-    //   failed: [{}],
-    //   stalled: [{}]
-    // }
     this.pagesData = [];
   }
 
@@ -40,6 +33,5 @@ window.GeneralStatistics = class {
     tabulator.init();
     /*  */
   }
-
 
 }
