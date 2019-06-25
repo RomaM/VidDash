@@ -1,10 +1,14 @@
-export default window.TabulatorMethods = class {
-  constructor(){
+import DataMethods from './data-methods.js';
 
-  }
+export default window.TabulatorMethods = class {
+  constructor(pagesData){
+    this.pagesData = pagesData;
+  };
 
   tabledata(){
-    let data = [
+    console.log('TABLE-DATA',this.pagesData[0].avgAbandonmentTime);
+
+    /*let data = [
       { name:"test-page", links:`https://xxxx`, avgWatchTime: '05:44m', views:12,
         mute: 40, activeView: '22:44m', scrolling: "01: 15s", orientation: 'Vertical',
         converted: '05:14s', avgAbandonement:'03:11m'},
@@ -23,7 +27,21 @@ export default window.TabulatorMethods = class {
       { name:"test-page6", links:"https://xxxx", avgWatchTime: '15:42m', views:11,
         mute: 15, activeView: '22:44m', scrolling: "01: 15s", orientation: 'Vertical',
         converted: '08:14s', avgAbandonement:'02:11m'},
-    ];
+    ];*/
+
+    /*avgAbandonmentTime: "00:00:38"
+    avgActiveView: "00:00:26"
+    avgConvertedTime: "00:00:32"
+    avgScrollTime: "00:00:27"
+    avgWatchTime: "00:00:32"
+    date: ["7.6.2019"]
+    failed: 0
+    locations: {unknownLocation: 1, Ukraine: 1}
+    muted: (2) [100, "00:00:00"]
+    stopped: 0
+    viewers: 1
+    visitors: 1*/
+
     return data
   }
 
@@ -32,21 +50,23 @@ export default window.TabulatorMethods = class {
       {title:"Page name", field:"name", width:250, /*headerFilter: true*/ },
       {title:"Links", field:"links", align:"left", formatter:"link", formatterParams:{label:"link"}},
       {title:"Avg. watch time", field:"avgWatchTime", align:"left"},
-      {title:"Views", field:"views", align:"left"},
-      {title:"Mute", field:"mute", align:"left"},
-      {title:"Active view", field:"activeView", align:"left"},
-      {title:"Scrolling", field:"scrolling", align:"left"},
-      {title:"Orientation", field:"orientation", align:"left"},
-      {title:"Converted", field:"converted", align:"left"},
-      {title:"Avg. abandonement", field:"avgAbandonement"},
+      {title:"Views", field:"viewers", align:"left"},
+      {title:"Visitors", field:"visitors", align:"left"},
+      {title:"Mute", field:"muted", align:"left"},
+      {title:"Active view", field:"avgActiveView", align:"left"},
+      {title:"Scrolling", field:"avgScrollTime", align:"left"},
+      /*{title:"Orientation", field:"orientation", align:"left"},*/
+      {title:"Converted", field:"avgConvertedTime", align:"left"},
+      {title:"Avg. abandonement", field:"avgAbandonmentTime"},
     ];
     return data
   }
 
   createTable(){
     const table = new Tabulator("#table-wrapper", {
-      data: this.tabledata(),
+      data: this.pagesData,
       layout: 'fitColumns',
+      layoutColumnsOnNewData:true,
       columns: this.columns()
     });
     return table
@@ -54,6 +74,5 @@ export default window.TabulatorMethods = class {
 
   init(){
     this.createTable();
-    console.log('Tables init')
   }
 }
