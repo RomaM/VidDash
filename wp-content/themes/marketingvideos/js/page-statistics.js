@@ -2,14 +2,14 @@ import DataMethods from './data-methods.js';
 
 // Model: A model for a single date with necessary data
 class ProcessedData {
-  constructor(date, viewers, visitors, locations, device, browser, orientation, muted, failed, stopped, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
+  constructor(date, viewers, visitors, locations, devices, browsers, orientations, muted, failed, stopped, avgActiveView, avgWatchTime, avgScrollTime, avgConvertedTime, avgAbandonmentTime) {
     this.date = date;
     this.viewers = viewers;
     this.visitors = visitors;
     this.locations = locations;
-    this.device = device;
-    this.browser = browser;
-    this.orientation = orientation;
+    this.devices = devices;
+    this.browsers = browsers;
+    this.orientations = orientations;
     this.muted = muted;
     this.failed = failed;
     this.stopped = stopped;
@@ -43,8 +43,6 @@ export default window.PageStatistics = class {
       muted: [false, 0],
       activeView: 0,
       scrolling: [false, 0],
-      vertical: false,
-      horizontal: false,
       converted: [false, 0],
       abandonment: 0,
       devices: new Set(),
@@ -120,11 +118,13 @@ export default window.PageStatistics = class {
     };
 
     Object.keys(rawData).map(obj => {
+
       if (obj == 'duration' && this.pageStatistics.vDuration == 0) {
         this.pageStatistics.vDuration = DataMethods.toTime(rawData[obj]);
       } else if (obj == 'date') {
         Object.keys(rawData[obj]).map(currDate => {
-          localProcessedData = new ProcessedData('', 0, 0, {'unknownLocation': 0}, [], [], [], [], 0, 0, 0, 0, 0, 0, 0);
+          localProcessedData =
+            new ProcessedData('', 0, 0, {'unknownLocation': 0}, {'unknownDevice': 0}, {'unknownBrowser': 0}, [0, 0], [], 0, 0, 0, 0, 0, 0, 0);
           localProcessedData.date = currDate;
 
           Object.keys(rawData[obj][currDate]['uids']).map((currUser) => {
@@ -132,6 +132,8 @@ export default window.PageStatistics = class {
 
             /* Get events statistic per a user*/
             processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
+            const currDevices = Array.from(processedEvents.devices);
+            const initialDevice = JSON.parse(currDevices[0]);
 
             localProcessedData.visitors++;
             if (processedEvents.watchTime > 0) {
@@ -139,15 +141,18 @@ export default window.PageStatistics = class {
               timeArrs.watchTimeArr.push(processedEvents.watchTime);
             }
 
-            if (currLocation == null || currLocation == 'unknownLocation') {
-              localProcessedData.locations['unknownLocation']++;
-            } else if (localProcessedData.locations.hasOwnProperty(currLocation)) {
-              localProcessedData.locations[currLocation]++;
-            } else {
-              localProcessedData.locations[currLocation] = 1;
+            DataMethods.repeatedFields(localProcessedData.locations, currLocation, 'unknownLocation');
+            DataMethods.repeatedFields(localProcessedData.devices, initialDevice['name'], 'unknownDevice');
+            DataMethods.repeatedFields(localProcessedData.browsers, initialDevice['browser'], 'unknownBrowser');
+
+            // Amount of Vertical/Horizontal viewing for mobile devices
+            if (initialDevice['name'] != 'Desktop') {
+              currDevices.map( device => {
+                let orientation = JSON.parse(device)['orientation'];
+                if (orientation == 'portrait') localProcessedData.orientations['0']++; // Vertical
+                else localProcessedData.orientations['1']++; // Horizontal
+              });
             }
-
-
 
             if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
 
@@ -182,7 +187,7 @@ export default window.PageStatistics = class {
 
   // Method: Summarize by filter dates
   recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
-    let summarizedData = new ProcessedData([], 0, 0, {}, [], [], [], [0, 0], 0, 0, 0, 0, 0, 0, 0);
+    let summarizedData = new ProcessedData([], 0, 0, {}, {}, {}, [0, 0], [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
       const dFrom = DataMethods.toDate(filterDates[0]);
       const dTo = DataMethods.toDate(filterDates[1]);
@@ -198,8 +203,21 @@ export default window.PageStatistics = class {
 
           Object.keys(el.locations).map(location => {
             if(summarizedData.locations.hasOwnProperty(location)) summarizedData.locations[location] += el.locations[location];
-            else summarizedData.locations[location] = 1
+            else summarizedData.locations[location] = el.locations[location];
           });
+
+          Object.keys(el.devices).map(device => {
+            if(summarizedData.devices.hasOwnProperty(device)) summarizedData.devices[device] += el.devices[device];
+            else summarizedData.devices[device] = el.devices[device];
+          });
+
+          Object.keys(el.browsers).map(browser => {
+            if(summarizedData.browsers.hasOwnProperty(browser)) summarizedData.browsers[browser] += el.browsers[browser];
+            else summarizedData.browsers[browser] = el.browsers[browser];
+          });
+
+          summarizedData.orientations['0'] += el.orientations['0'];
+          summarizedData.orientations['1'] += el.orientations['1'];
 
           el.muted.map(singleMute => {
             summarizedData.muted['0']++; // Amount of muted users
@@ -215,6 +233,13 @@ export default window.PageStatistics = class {
           summarizedData.avgAbandonmentTime += el.avgAbandonmentTime;
         }
       });
+
+      // Percentage of Vertical/Horizontal viewing for mobile devices
+      if (summarizedData.orientations['0'] > 0 || summarizedData.orientations['1'] > 0) {
+        const quantity = summarizedData.orientations['0'] + summarizedData.orientations['1'];
+        summarizedData.orientations['0'] = DataMethods.toPercent(summarizedData.orientations['0'], quantity);
+        summarizedData.orientations['1'] = DataMethods.toPercent(summarizedData.orientations['1'], quantity);
+      }
 
       if (summarizedData.date.length > 0) {
         if (summarizedData.muted[0] > 0) {
@@ -234,11 +259,8 @@ export default window.PageStatistics = class {
         summarizedData.avgAbandonmentTime = DataMethods.toTime(summarizedData.avgAbandonmentTime / summarizedData.date.length);
       }
     }
-    summarizedData.pDomain = processedData.pDomain;
-    summarizedData.pName = processedData.pName;
-    summarizedData.pVideo = processedData.pVideo;
-    summarizedData.pLink = processedData.pLink;
-    summarizedData.vDuration = processedData.vDuration;
+
+    Object.keys(processedData).map(key => {(key !== 'dates') ? summarizedData[key] = processedData[key] : '';});
     return (summarizedData.date.length > 0) ? summarizedData : null;
   }
 

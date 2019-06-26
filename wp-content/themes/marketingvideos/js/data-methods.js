@@ -21,8 +21,7 @@ export default class DataMethods {
 
   // Method: Check object emptiness
   static objEmpty(obj) {
-    if ((typeof obj) !== 'object' || Object.getOwnPropertyNames(obj).length === 0 ) { return true; }
-    return false;
+    return ((typeof obj) !== 'object' || Object.getOwnPropertyNames(obj).length === 0);
   }
 
   // Method: Calculate an average data from an array
@@ -38,6 +37,12 @@ export default class DataMethods {
     const newNode = parent.appendChild(document.createElement(tagName));
     className ? newNode.className = className : '';
     nodeData ? newNode.innerHTML = nodeData : '';
+  }
+
+  static repeatedFields(obj, key, nullValue) {
+    if (!key || key === nullValue) obj[nullValue] += 1;
+    else if (obj.hasOwnProperty(key)) obj[key] += 1;
+    else obj[key] = 1;
   }
 
   // Method: Round seconds and convert to time
