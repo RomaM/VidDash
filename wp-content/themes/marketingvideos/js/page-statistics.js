@@ -23,10 +23,10 @@ class ProcessedData {
 
 // Class: Basic class for a page statistics
 export default window.PageStatistics = class {
-  constructor(videoPage, videoPageData) {
-    this.videoPage = videoPage;
+  constructor(videoPageInfo, videoPageData) {
+    this.videoPageInfo = videoPageInfo;
     this.videoPageData = videoPageData;
-    this.pageStatistics = {
+    this.detailedInfo = {
       pDomain: '',
       pName: '',
       pVideo: '',
@@ -36,7 +36,7 @@ export default window.PageStatistics = class {
     }
   }
 
-  // Method: Parse list of events for a single UID
+  // Method: Parse list of events for a single user
   parseEvents(events) {
     const processed = {
       watchTime: 0,
@@ -99,14 +99,8 @@ export default window.PageStatistics = class {
     return processed;
   }
 
-  // Method: Get main page info
-  pageInfo(rawString) {
-    let data = rawString.split('|');
-    [this.pageStatistics.pDomain, this.pageStatistics.pName, this.pageStatistics.pVideo, this.pageStatistics.pLink] = [data[0], data[1], data[2], `https://${data[0]}/${data[1]}`];
-  }
-
-  // Method: Parse raw info about single page
-  pageData(rawData) {
+  // Method: Parse raw data of a single page by dates
+  parseDataByDates(rawData) {
     let localProcessedData = {};
     let processedEvents = {};
     let timeArrs = {
@@ -117,10 +111,14 @@ export default window.PageStatistics = class {
       abandonmentTimeArr: []
     };
 
+    /* Get static info about a page */
+    let data = this.videoPageInfo.split('|');
+    [this.detailedInfo.pDomain, this.detailedInfo.pName, this.detailedInfo.pVideo, this.detailedInfo.pLink] = [data[0], data[1], data[2], `https://${data[0]}/${data[1]}`];
+
     Object.keys(rawData).map(obj => {
 
-      if (obj == 'duration' && this.pageStatistics.vDuration == 0) {
-        this.pageStatistics.vDuration = DataMethods.toTime(rawData[obj]);
+      if (obj == 'duration' && this.detailedInfo.vDuration == 0) {
+        this.detailedInfo.vDuration = DataMethods.toTime(rawData[obj]);
       } else if (obj == 'date') {
         Object.keys(rawData[obj]).map(currDate => {
           localProcessedData =
@@ -145,7 +143,7 @@ export default window.PageStatistics = class {
             DataMethods.repeatedFields(localProcessedData.devices, initialDevice['name'], 'unknownDevice');
             DataMethods.repeatedFields(localProcessedData.browsers, initialDevice['browser'], 'unknownBrowser');
 
-            // Amount of Vertical/Horizontal viewing for mobile devices
+            /* Amount of Vertical/Horizontal viewing for mobile devices */
             if (initialDevice['name'] != 'Desktop') {
               currDevices.map( device => {
                 let orientation = JSON.parse(device)['orientation'];
@@ -177,15 +175,15 @@ export default window.PageStatistics = class {
           localProcessedData.avgConvertedTime = DataMethods.avgAmount(timeArrs.convertedTimeArr);
           localProcessedData.avgAbandonmentTime = DataMethods.avgAmount(timeArrs.abandonmentTimeArr);
 
-          this.pageStatistics.dates.push(localProcessedData);
+          this.detailedInfo.dates.push(localProcessedData);
         });
       }
     });
 
-    return this.pageStatistics;
+    return this.detailedInfo;
   }
 
-  // Method: Summarize by filter dates
+  // Method: Summarize processed data by dates filter
   recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
     let summarizedData = new ProcessedData([], 0, 0, {}, {}, {}, [0, 0], [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
@@ -220,8 +218,8 @@ export default window.PageStatistics = class {
           summarizedData.orientations['1'] += el.orientations['1'];
 
           el.muted.map(singleMute => {
-            summarizedData.muted['0']++; // Amount of muted users
-            summarizedData.muted['1'] += singleMute['1']; // Average of muted time
+            summarizedData.muted['0']++; /* Amount of muted users */
+            summarizedData.muted['1'] += singleMute['1']; /* Average of muted time */
           });
 
           summarizedData.stopped += el.stopped;
@@ -234,7 +232,7 @@ export default window.PageStatistics = class {
         }
       });
 
-      // Percentage of Vertical/Horizontal viewing for mobile devices
+      /* Percentage of Vertical/Horizontal viewing for mobile devices */
       if (summarizedData.orientations['0'] > 0 || summarizedData.orientations['1'] > 0) {
         const quantity = summarizedData.orientations['0'] + summarizedData.orientations['1'];
         summarizedData.orientations['0'] = DataMethods.toPercent(summarizedData.orientations['0'], quantity);
@@ -243,9 +241,9 @@ export default window.PageStatistics = class {
 
       if (summarizedData.date.length > 0) {
         if (summarizedData.muted[0] > 0) {
-          // Percentage of visitors to muted users
+          /* Percentage of visitors to muted users */
           summarizedData.muted['0'] = DataMethods.toPercent(summarizedData.muted['0'], summarizedData.viewers);
-          // Average viewed time before muted
+          /* Average viewed time before muted */
           summarizedData.muted['1'] = DataMethods.toTime(summarizedData.muted['1'] / summarizedData.muted['0']);
         }
 
@@ -264,9 +262,11 @@ export default window.PageStatistics = class {
     return (summarizedData.date.length > 0) ? summarizedData : null;
   }
 
+  // Method:
+
+
   // Method: Main launching method
   init() {
-    this.pageInfo(this.videoPage);
-    return this.recalculateByFilters(this.pageData(this.videoPageData));
+    return this.recalculateByFilters(this.parseDataByDates(this.videoPageData));
   }
 }

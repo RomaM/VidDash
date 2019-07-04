@@ -23,9 +23,20 @@ window.GeneralStatistics = class {
     return true;
   }
 
+  // Method: Sorting array of objects by a param
+  sortingByParam(arr, param) {
+    return arr.sort((a, b) => {
+      if (a[param] > b[param]) return 1;
+      if (a[param] < b[param]) return -1;
+      return 0;
+    });
+  }
+
   // Method: Main launching method
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
+
+    this.sortingByParam(this.pagesData, 'visitors');
 
     DataMethods.logger(this.pagesData, 'obj');
   }
