@@ -147,8 +147,8 @@ export default window.PageStatistics = class {
             if (initialDevice['name'] != 'Desktop') {
               currDevices.map( device => {
                 let orientation = JSON.parse(device)['orientation'];
-                if (orientation == 'portrait') localProcessedData.orientations['0']++; // Vertical
-                else localProcessedData.orientations['1']++; // Horizontal
+                if (orientation == 'portrait') localProcessedData.orientations['0']++; // Portrait
+                else localProcessedData.orientations['1']++; // Landscape
               });
             }
 
@@ -214,8 +214,8 @@ export default window.PageStatistics = class {
             else summarizedData.browsers[browser] = el.browsers[browser];
           });
 
-          summarizedData.orientations['0'] += el.orientations['0'];
-          summarizedData.orientations['1'] += el.orientations['1'];
+          summarizedData.orientations['0'] += el.orientations['0']; // Portrait
+          summarizedData.orientations['1'] += el.orientations['1']; // Landscape
 
           el.muted.map(singleMute => {
             summarizedData.muted['0']++; /* Amount of muted users */
@@ -238,6 +238,7 @@ export default window.PageStatistics = class {
         summarizedData.orientations['0'] = DataMethods.toPercent(summarizedData.orientations['0'], quantity);
         summarizedData.orientations['1'] = DataMethods.toPercent(summarizedData.orientations['1'], quantity);
       }
+      summarizedData.orientations = summarizedData.orientations.join(', ');
 
       if (summarizedData.date.length > 0) {
         if (summarizedData.muted[0] > 0) {
@@ -246,6 +247,7 @@ export default window.PageStatistics = class {
           /* Average viewed time before muted */
           summarizedData.muted['1'] = DataMethods.toTime(summarizedData.muted['1'] / summarizedData.muted['0']);
         }
+        summarizedData.muted = summarizedData.muted.join(', ');
 
         if (summarizedData.stopped > 0) {summarizedData.stopped = DataMethods.toPercent(summarizedData.stopped, summarizedData.visitors)};
         if (summarizedData.failed > 0) {summarizedData.failed = DataMethods.toPercent(summarizedData.failed, summarizedData.visitors)};
