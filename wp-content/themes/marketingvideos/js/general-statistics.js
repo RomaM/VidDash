@@ -16,7 +16,7 @@ window.GeneralStatistics = class {
 
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
-      const pageResult = pageInstance.init();
+      const pageResult = pageInstance.init(['17.07.2019', '31.12.2222']);
 
       this.pagesData[i] = pageResult;
     });
@@ -26,8 +26,10 @@ window.GeneralStatistics = class {
   // Method: Sorting array of objects by a param
   sortingByParam(arr, param) {
     return arr.sort((a, b) => {
-      if (a[param] > b[param]) return 1;
-      if (a[param] < b[param]) return -1;
+      if (a && b) {
+        if (a[param] > b[param]) return 1;
+        if (a[param] < b[param]) return -1;
+      }
       return 0;
     });
   }

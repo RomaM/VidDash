@@ -59,14 +59,23 @@ export default window.PageStatistics = class {
         case ('pause'):
           break;
         case ('userLeave'):
+        case ('mobileTouch'):
+        case ('submit'):
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
           processed.watchTime = single['videoTime'];
           processed.abandonment = single['timestamp'];
+
+          if (single['event'] == 'submit') {
+            processed.converted = [true, single['videoTime']];
+          }
           break;
         case ('muted'):
-          if (processed.muted[0] == false) processed.muted = [true, single['videoTime']]
+          if (processed.muted[0] == false) processed.muted = [true, single['videoTime']];
+          console.log('MUTED');
           break;
         case ('unmuted'):
+          processed.muted[0] = false;
+          console.log('UNMUTED');
           break;
         case ('formfocus'):
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
@@ -74,12 +83,6 @@ export default window.PageStatistics = class {
         case ('ScrollOut'):
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
           if (processed.scrolling[0] == false) processed.scrolling = [true, single['videoTime']];
-          break;
-        case ('submit'):
-          if (processed.activeView == 0) processed.activeView = single['videoTime'];
-          processed.watchTime = single['videoTime'];
-          processed.converted = [true, single['videoTime']];
-          processed.abandonment = single['timestamp'];
           break;
         case ('error'):
           if (processed.failed == false) processed.failed = true;
@@ -100,7 +103,7 @@ export default window.PageStatistics = class {
   }
 
   // Method: Parse raw data of a single page by dates
-  parseDataByDates(rawData) {
+  parseDataByDates(rawData, filterDates) {
     let localProcessedData = {};
     let processedEvents = {};
     let timeArrs = {
@@ -119,63 +122,75 @@ export default window.PageStatistics = class {
 
       if (obj == 'duration' && this.detailedInfo.vDuration == 0) {
         this.detailedInfo.vDuration = DataMethods.toTime(rawData[obj]);
-      } else if (obj == 'date') {
+      } else if (obj == 'date' && filterDates.length === 2) {
+
+        const dFrom = DataMethods.toDate(filterDates[0]);
+        const dTo = DataMethods.toDate(filterDates[1]);
+
         Object.keys(rawData[obj]).map(currDate => {
-          localProcessedData =
-            new ProcessedData('', 0, 0, {'unknownLocation': 0}, {'unknownDevice': 0}, {'unknownBrowser': 0}, [0, 0], [], 0, 0, 0, 0, 0, 0, 0);
-          localProcessedData.date = currDate;
 
-          Object.keys(rawData[obj][currDate]['uids']).map((currUser) => {
-            let currLocation = rawData[obj][currDate]['uids'][currUser]['location'];
+          let elDate = DataMethods.toDate(currDate);
 
-            /* Get events statistic per a user*/
-            processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
-            const currDevices = Array.from(processedEvents.devices);
-            const initialDevice = JSON.parse(currDevices[0]);
+          if(elDate >= dFrom && elDate <= dTo) {
 
-            localProcessedData.visitors++;
-            if (processedEvents.watchTime > 0) {
-              localProcessedData.viewers++;
-              timeArrs.watchTimeArr.push(processedEvents.watchTime);
-            }
+            localProcessedData =
+              new ProcessedData('', 0, 0, {'unknownLocation': 0}, {'unknownDevice': 0}, {'unknownBrowser': 0}, [0, 0], [], 0, 0, 0, 0, 0, 0, 0);
+            localProcessedData.date = currDate;
 
-            DataMethods.repeatedFields(localProcessedData.locations, currLocation, 'unknownLocation');
-            DataMethods.repeatedFields(localProcessedData.devices, initialDevice['name'], 'unknownDevice');
-            DataMethods.repeatedFields(localProcessedData.browsers, initialDevice['browser'], 'unknownBrowser');
+            Object.keys(rawData[obj][currDate]['uids']).map((currUser) => {
+              let currLocation = rawData[obj][currDate]['uids'][currUser]['location'];
 
-            /* Amount of Vertical/Horizontal viewing for mobile devices */
-            if (initialDevice['name'] != 'Desktop') {
-              currDevices.map( device => {
-                let orientation = JSON.parse(device)['orientation'];
-                if (orientation == 'portrait') localProcessedData.orientations['0']++; // Portrait
-                else localProcessedData.orientations['1']++; // Landscape
-              });
-            }
+              /* Get events statistic per a user*/
+              processedEvents = this.parseEvents(rawData[obj][currDate]['uids'][currUser]['events']);
+              const currDevices = Array.from(processedEvents.devices);
+              const initialDevice = JSON.parse(currDevices[0]);
 
-            if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
+              localProcessedData.visitors++;
 
-            if (processedEvents.failed == true) localProcessedData.failed++;
+              if (processedEvents.watchTime > 0) {
+                localProcessedData.viewers++;
+                timeArrs.watchTimeArr.push(processedEvents.watchTime);
+              }
 
-            if (processedEvents.stopped == true) localProcessedData.stopped++;
+              DataMethods.repeatedFields(localProcessedData.locations, currLocation, 'unknownLocation');
+              DataMethods.repeatedFields(localProcessedData.devices, initialDevice['name'], 'unknownDevice');
+              DataMethods.repeatedFields(localProcessedData.browsers, initialDevice['browser'], 'unknownBrowser');
 
-            if (processedEvents.scrolling[0]) timeArrs.scrollTimeArr.push(processedEvents.scrolling[1]);
+              /* Amount of Vertical/Horizontal viewing for mobile devices */
+              if (initialDevice['name'] != 'Desktop') {
+                currDevices.map(device => {
+                  let orientation = JSON.parse(device)['orientation'];
+                  if (orientation == 'portrait') localProcessedData.orientations['0']++; // Portrait
+                  else localProcessedData.orientations['1']++; // Landscape
+                });
+              }
 
-            if (processedEvents.converted[0]) timeArrs.convertedTimeArr.push(processedEvents.converted[1]);
+              if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
 
-            if (processedEvents.activeView > 0) timeArrs.activeView.push(processedEvents.activeView);
+              if (processedEvents.failed == true) localProcessedData.failed++;
 
-            timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
+              if (processedEvents.stopped == true) localProcessedData.stopped++;
 
-            localProcessedData.failed += processedEvents.failed;
-          });
+              if (processedEvents.scrolling[0]) timeArrs.scrollTimeArr.push(processedEvents.scrolling[1]);
 
-          localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
-          localProcessedData.avgWatchTime = DataMethods.avgAmount(timeArrs.watchTimeArr);
-          localProcessedData.avgScrollTime = DataMethods.avgAmount(timeArrs.scrollTimeArr);
-          localProcessedData.avgConvertedTime = DataMethods.avgAmount(timeArrs.convertedTimeArr);
-          localProcessedData.avgAbandonmentTime = DataMethods.avgAmount(timeArrs.abandonmentTimeArr);
+              if (processedEvents.converted[0]) timeArrs.convertedTimeArr.push(processedEvents.converted[1]);
 
-          this.detailedInfo.dates.push(localProcessedData);
+              if (processedEvents.activeView > 0) timeArrs.activeView.push(processedEvents.activeView);
+
+              timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
+
+              localProcessedData.failed += processedEvents.failed;
+            });
+
+            localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
+            localProcessedData.avgWatchTime = DataMethods.avgAmount(timeArrs.watchTimeArr);
+            localProcessedData.avgScrollTime = DataMethods.avgAmount(timeArrs.scrollTimeArr);
+            localProcessedData.avgConvertedTime = DataMethods.avgAmount(timeArrs.convertedTimeArr);
+            localProcessedData.avgAbandonmentTime = DataMethods.avgAmount(timeArrs.abandonmentTimeArr);
+
+            this.detailedInfo.dates.push(localProcessedData);
+
+          }
         });
       }
     });
@@ -183,18 +198,12 @@ export default window.PageStatistics = class {
     return this.detailedInfo;
   }
 
-  // Method: Summarize processed data by dates filter
-  recalculateByFilters(processedData, filterDates = ['31.1.2000', '31.12.2222']) {
+  // Method: Summarizing processed data and convert to required format
+  convertToRequired(processedData) {
     let summarizedData = new ProcessedData([], 0, 0, {}, {}, {}, [0, 0], [0, 0], 0, 0, 0, 0, 0, 0, 0);
-    if (!DataMethods.objEmpty(processedData) && filterDates.length === 2) {
-      const dFrom = DataMethods.toDate(filterDates[0]);
-      const dTo = DataMethods.toDate(filterDates[1]);
+    if (!DataMethods.objEmpty(processedData)) {
 
       processedData['dates'].map(el => {
-        let elDate = DataMethods.toDate(el.date);
-
-        if(elDate >= dFrom && elDate <= dTo) {
-
           summarizedData.date.push(el.date);
           summarizedData.viewers += el.viewers;
           summarizedData.visitors += el.visitors;
@@ -229,7 +238,7 @@ export default window.PageStatistics = class {
           summarizedData.avgActiveView += el.avgActiveView;
           summarizedData.avgConvertedTime += el.avgConvertedTime;
           summarizedData.avgAbandonmentTime += el.avgAbandonmentTime;
-        }
+
       });
 
       /* Percentage of Vertical/Horizontal viewing for mobile devices */
@@ -242,10 +251,12 @@ export default window.PageStatistics = class {
 
       if (summarizedData.date.length > 0) {
         if (summarizedData.muted[0] > 0) {
+          let mutedUsers = summarizedData.muted[0];
           /* Percentage of visitors to muted users */
-          summarizedData.muted['0'] = DataMethods.toPercent(summarizedData.muted['0'], summarizedData.viewers);
+          summarizedData.muted[0] = DataMethods.toPercent(mutedUsers, summarizedData.viewers);
+
           /* Average viewed time before muted */
-          summarizedData.muted['1'] = DataMethods.toTime(summarizedData.muted['1'] / summarizedData.muted['0']);
+          summarizedData.muted[1] = DataMethods.toTime(summarizedData.muted[1] / mutedUsers);
         }
         summarizedData.muted = summarizedData.muted.join(', ');
 
@@ -268,7 +279,7 @@ export default window.PageStatistics = class {
 
 
   // Method: Main launching method
-  init() {
-    return this.recalculateByFilters(this.parseDataByDates(this.videoPageData));
+  init(filterDates) {
+    return this.convertToRequired(this.parseDataByDates(this.videoPageData, filterDates));
   }
 }
