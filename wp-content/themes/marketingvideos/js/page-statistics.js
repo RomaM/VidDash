@@ -46,8 +46,9 @@ export default window.PageStatistics = class {
       converted: [false, 0],
       abandonment: 0,
       devices: new Set(),
-      failed: false,
-      stopped: false
+      failed: [false, 'empty', 0],
+      stopped: [false, 'empty', 0],
+      canPlay: false
     };
 
     events.map(single => {
@@ -65,17 +66,15 @@ export default window.PageStatistics = class {
           processed.watchTime = single['videoTime'];
           processed.abandonment = single['timestamp'];
 
-          if (single['event'] == 'submit') {
-            processed.converted = [true, single['videoTime']];
-          }
+          if (single['event'] == 'submit') processed.converted = [true, single['videoTime']];
+
+          if (single['videoTime'] > 0) processed.failed = [false, 'error'];
           break;
         case ('muted'):
           if (processed.muted[0] == false) processed.muted = [true, single['videoTime']];
-          console.log('MUTED');
           break;
         case ('unmuted'):
           processed.muted[0] = false;
-          console.log('UNMUTED');
           break;
         case ('formfocus'):
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
@@ -84,19 +83,31 @@ export default window.PageStatistics = class {
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
           if (processed.scrolling[0] == false) processed.scrolling = [true, single['videoTime']];
           break;
+        case ('stalled'):
+          if (processed.failed[1] == 'empty') processed.failed = [true, 'stalled'];
+          if (processed.stopped[0] == false) processed.stopped = [true, 'stalled', single['videoTime']];
+          break;
         case ('error'):
-          if (processed.failed == false) processed.failed = true;
         case ('abort'):
         case ('emptied'):
-        case ('stalled'):
-          if (processed.stopped == false) processed.stopped = true;
+          if (processed.failed[1] == 'empty' || processed.failed[1] == 'stalled') processed.failed = [true, 'error'];
+          if (processed.stopped[0] == false || processed.stopped[1] == 'stalled') processed.stopped = [true, 'stopped'];
+          break;
+        case ('canplay'):
+          processed.canPlay = true;
+          processed.failed = [false, 'error'];
+          if (processed.stopped[1] == 'stalled') {
+            processed.stopped = [false, 'stopped'];
+          }
           break;
         default:
           break;
       }
     });
 
-    // DataMethods.logger(processed.devices, 'obj');
+    if (processed.watchTime > processed.stopped[2] && processed.stopped[1] == 'stalled' ) {
+      processed.stopped[0] = false;
+    }
 
     processed.abandonment = processed.abandonment / 1000;
     return processed;
@@ -167,9 +178,9 @@ export default window.PageStatistics = class {
 
               if (processedEvents.muted[0]) localProcessedData.muted.push(processedEvents.muted);
 
-              if (processedEvents.failed == true) localProcessedData.failed++;
+              if (processedEvents.failed[0] == true) localProcessedData.failed++;
 
-              if (processedEvents.stopped == true) localProcessedData.stopped++;
+              if (processedEvents.stopped[0] == true) localProcessedData.stopped++;
 
               if (processedEvents.scrolling[0]) timeArrs.scrollTimeArr.push(processedEvents.scrolling[1]);
 
@@ -179,7 +190,7 @@ export default window.PageStatistics = class {
 
               timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
 
-              localProcessedData.failed += processedEvents.failed;
+              // localProcessedData.failed += processedEvents.failed;
             });
 
             localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
@@ -195,6 +206,7 @@ export default window.PageStatistics = class {
       }
     });
 
+    DataMethods.logger(this.detailedInfo, 'obj');
     return this.detailedInfo;
   }
 
@@ -275,7 +287,7 @@ export default window.PageStatistics = class {
     return (summarizedData.date.length > 0) ? summarizedData : null;
   }
 
-  // Method:
+  // Method: List of most viewed pages on line statistics
 
 
   // Method: Main launching method
