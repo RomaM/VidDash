@@ -29,7 +29,7 @@ window.GeneralStatistics = class {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
     DataMethods.logger(this.pagesData, 'obj');
-    const tabulator = new TabulatorMethods(this.pagesData);
+    const tabulator = new TabulatorMethods(this.pagesData, '#table-wrapper');
     tabulator.init();
     /*  */
   }

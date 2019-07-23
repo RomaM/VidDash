@@ -1,0 +1,45 @@
+@import "../css/variables.scss";
+
+.tabulator{
+  background: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  border: none;
+  border-top: 3px solid $base-dark-color;
+  border-left: 1px solid $table-border;
+  margin: 10px;
+  margin-top: 20px;
+  .tabulator-header{
+    border-bottom: 1px solid $table-border;
+  }
+  .tabulator-header{
+    .tabulator-col{
+      border-right: 1px solid $table-border;
+      background: #ffffff;
+    }
+  }
+  .tabulator-row{
+    &.tabulator-selectable{
+      &:hover{
+        background-color: #efefef;
+      }
+    }
+    .tabulator-cell{
+      border-right: 1px solid $table-border;
+    }
+  }
+  &-row{
+    border-bottom: 1px solid $table-border;
+    &.tabulator-row-even{
+      background-color: transparent;
+    }
+  }
+
+  a{
+    color: $link;
+    transition: all ease-out 0.2s;
+    &:hover{
+      color: $link-hover;
+      text-decoration: none;
+    }
+  }
+}
