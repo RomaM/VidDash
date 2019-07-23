@@ -1,0 +1,57 @@
+@import "../css/variables.scss";
+
+.charts {
+  display: flex;
+  justify-content: space-between;
+  align-content: flex-start;
+  &__box {
+    position: relative;
+  }
+  &__subtitle {
+    font-size: 16px;
+    margin: 0 0 15px 0;
+  }
+  &__chart{
+    display: flex;
+
+    &-pie{
+      width: $pie-radius-desktop;
+      height: $pie-radius-desktop;
+      margin: 0 0 0 0px;
+      border-radius: 50%;
+      border: 3px solid $base-light-color;
+      position: relative;
+    }
+    &-pieborder{
+      position: absolute;
+      width: 85px;
+      height: 85px;
+      bottom: -3px;
+      right: -3px;
+      background: transparent;
+      border-radius: 0 0 100px 0;
+      -moz-border-radius: 0 0 100px 0;
+      -webkit-border-radius: 0 0 100px 0;
+      border-bottom: 3px solid yellow;
+      border-right: 3px solid yellow;
+    }
+    &-legend{
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      margin-right: 10px;
+      color: #555;
+      font-size: 14px;
+    }
+  }
+  &__views{
+    display: grid;
+    grid-template-columns: 30px 30px 30px 30px 30px;
+    &-block{
+      background: #d175ff;
+      margin: 2px;
+      height: 15px;
+    }
+  }
+}
+

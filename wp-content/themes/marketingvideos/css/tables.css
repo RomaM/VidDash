@@ -1,11 +1,12 @@
-/*variables*/
+/*colors*/
+/*helpers*/
 .tabulator {
+  box-sizing: border-box;
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
   border-top: 3px solid #6000c6;
   border-left: 1px solid #dfdfdf;
-  margin: 10px;
   margin-top: 20px; }
 
 .tabulator .tabulator-header {

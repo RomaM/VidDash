@@ -9,7 +9,64 @@
     <script type="module" src="<?php echo get_template_directory_uri(); ?>/js/general-statistics.js"></script>
     <div class="page">
         <?php $videoPages = json_encode($videoPages)?>
-        <h2>General statistics:</h2>
+        <h1 class="page__title">Video Dashboard</h1>
+
+        <section class="charts">
+            <div class="charts__box">
+                <p class="charts__subtitle">Failed to upload</p>
+                <div class="charts__chart">
+                    <ul class="charts__chart-legend">
+                        <li>15% - Internet</li>
+                        <li>85% - CDN</li>
+                    </ul>
+                    <div class="charts__chart-pie">
+                        <div class="charts__chart-pieborder"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="charts__box">
+                <p class="charts__subtitle">Stopped playing</p>
+                <div class="charts__chart">
+                    <ul class="charts__chart-legend">
+                        <li>15% - Stopped</li>
+                    </ul>
+                    <div class="charts__chart-pie">
+                        <div class="charts__chart-pieborder"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="charts__box">
+                <p class="charts__subtitle">Video views</p>
+                <div class="charts__views">
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block"></div>
+                </div>
+            </div>
+            <div class="charts__box">
+                <p class="charts__subtitle">Distribution</p>
+                World pecentage
+            </div>
+        </section>
+
+        <h2>Engagement:</h2>
         <div id="table-wrapper"></div>
 
         <script>

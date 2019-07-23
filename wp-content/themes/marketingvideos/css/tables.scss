@@ -1,12 +1,12 @@
 @import "../css/variables.scss";
 
 .tabulator{
+  box-sizing: border-box;
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
   border-top: 3px solid $base-dark-color;
   border-left: 1px solid $table-border;
-  margin: 10px;
   margin-top: 20px;
   .tabulator-header{
     border-bottom: 1px solid $table-border;

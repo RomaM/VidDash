@@ -7,6 +7,10 @@ export default window.TabulatorMethods = class {
   };
 
   //TODO remove methods and place values from library side
+  static getMutedPercentage(data){
+    data.map(e => {e.mutedPercents = `${e.muted[0]}%`});
+    return data
+  };
   static getVisitorsPercentage(data){
     data.map(e => {
       let percents = (e.viewers/e.visitors) * 100;
@@ -38,6 +42,7 @@ export default window.TabulatorMethods = class {
   }
 
   configTable(){
+    TabulatorMethods.getMutedPercentage(this.pagesData);
     TabulatorMethods.getVisitorsPercentage(this.pagesData);
     return {
       data: this.pagesData,
