@@ -51,6 +51,10 @@
       background: #d175ff;
       margin: 2px;
       height: 15px;
+      transition: opacity ease-out 0.2s;
+      &:hover{
+        opacity: 0.5;
+      }
     }
   }
 }

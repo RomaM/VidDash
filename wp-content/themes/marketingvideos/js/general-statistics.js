@@ -17,7 +17,7 @@ window.GeneralStatistics = class {
 
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
-      const pageResult = pageInstance.init(['22.07.2019', '31.12.2222']);
+      const pageResult = pageInstance.init(['10.08.2019', '31.12.2222']);
 
       this.pagesData[i] = pageResult;
     });
@@ -38,12 +38,11 @@ window.GeneralStatistics = class {
   // Method: Main launching method
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
-
     this.sortingByParam(this.pagesData, 'visitors');
-
     DataMethods.logger(this.pagesData, 'obj');
     const tabulator = new TabulatorMethods(this.pagesData, '#table-wrapper');
     tabulator.init();
+
     /*  */
   }
 

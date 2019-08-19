@@ -5,25 +5,41 @@
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
-  border-top: 3px solid #6000c6;
-  border-left: 1px solid #dfdfdf;
+  border-top: 1.5px solid #333;
+  border-left: none;
   margin-top: 20px; }
 
+.tabulator-title {
+  font-size: 18px;
+  color: #000;
+  margin: 30px auto auto 10px; }
+
 .tabulator .tabulator-header {
-  border-bottom: 1px solid #dfdfdf; }
+  border-bottom: 1.5px solid #333;
+  font-weight: 400;
+  color: #000; }
 
 .tabulator .tabulator-header .tabulator-col {
-  border-right: 1px solid #dfdfdf;
-  background: #ffffff; }
+  border-right: none;
+  background: #ffffff;
+  display: flex;
+  justify-content: stretch;
+  align-items: center; }
+
+.tabulator .tabulator-header .tabulator-headers {
+  display: flex;
+  padding: 10px 0;
+  background: #fff; }
 
 .tabulator .tabulator-row.tabulator-selectable:hover {
   background-color: #efefef; }
 
 .tabulator .tabulator-row .tabulator-cell {
-  border-right: 1px solid #dfdfdf; }
+  border-right: none; }
 
 .tabulator-row {
-  border-bottom: 1px solid #dfdfdf; }
+  border-bottom: 1px solid #666;
+  padding: 10px 0; }
 
 .tabulator-row.tabulator-row-even {
   background-color: transparent; }

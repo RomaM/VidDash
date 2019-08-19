@@ -66,7 +66,7 @@
             </div>
         </section>
 
-        <h2>Engagement:</h2>
+        <h2 class="tabulator-title">Engagement:</h2>
         <div id="table-wrapper"></div>
 
         <script>

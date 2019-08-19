@@ -4,43 +4,55 @@
   display: flex;
   justify-content: space-between;
   align-content: flex-start; }
-  .charts__box {
-    position: relative; }
-  .charts__subtitle {
-    font-size: 16px;
-    margin: 0 0 15px 0; }
-  .charts__chart {
-    display: flex; }
-    .charts__chart-pie {
-      width: 170px;
-      height: 170px;
-      margin: 0 0 0 0px;
-      border-radius: 50%;
-      border: 3px solid #8d46d9;
-      position: relative; }
-    .charts__chart-pieborder {
-      position: absolute;
-      width: 85px;
-      height: 85px;
-      bottom: -3px;
-      right: -3px;
-      background: transparent;
-      border-radius: 0 0 100px 0;
-      -moz-border-radius: 0 0 100px 0;
-      -webkit-border-radius: 0 0 100px 0;
-      border-bottom: 3px solid yellow;
-      border-right: 3px solid yellow; }
-    .charts__chart-legend {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      margin-right: 10px;
-      color: #555;
-      font-size: 14px; }
-  .charts__views {
-    display: grid;
-    grid-template-columns: 30px 30px 30px 30px 30px; }
-    .charts__views-block {
-      background: #d175ff;
-      margin: 2px;
-      height: 15px; }
+
+.charts__box {
+  position: relative; }
+
+.charts__subtitle {
+  font-size: 16px;
+  margin: 0 0 15px 0; }
+
+.charts__chart {
+  display: flex; }
+
+.charts__chart-pie {
+  width: 170px;
+  height: 170px;
+  margin: 0 0 0 0px;
+  border-radius: 50%;
+  border: 3px solid #8d46d9;
+  position: relative; }
+
+.charts__chart-pieborder {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  bottom: -3px;
+  right: -3px;
+  background: transparent;
+  border-radius: 0 0 100px 0;
+  -moz-border-radius: 0 0 100px 0;
+  -webkit-border-radius: 0 0 100px 0;
+  border-bottom: 3px solid yellow;
+  border-right: 3px solid yellow; }
+
+.charts__chart-legend {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-right: 10px;
+  color: #555;
+  font-size: 14px; }
+
+.charts__views {
+  display: grid;
+  grid-template-columns: 30px 30px 30px 30px 30px; }
+
+.charts__views-block {
+  background: #d175ff;
+  margin: 2px;
+  height: 15px;
+  transition: opacity ease-out 0.2s; }
+
+.charts__views-block:hover {
+  opacity: 0.5; }

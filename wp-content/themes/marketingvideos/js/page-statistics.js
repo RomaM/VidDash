@@ -288,8 +288,6 @@ export default window.PageStatistics = class {
   }
 
   // Method: List of most viewed pages on line statistics
-
-
   // Method: Main launching method
   init(filterDates) {
     return this.convertToRequired(this.parseDataByDates(this.videoPageData, filterDates));
