@@ -17,16 +17,29 @@ window.GeneralStatistics = class {
 
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
-      const pageResult = pageInstance.init();
+      const pageResult = pageInstance.init(['22.07.2019', '31.12.2222']);
 
       this.pagesData[i] = pageResult;
     });
     return true;
   }
 
+  // Method: Sorting array of objects by a param
+  sortingByParam(arr, param) {
+    return arr.sort((a, b) => {
+      if (a && b) {
+        if (a[param] > b[param]) return 1;
+        if (a[param] < b[param]) return -1;
+      }
+      return 0;
+    });
+  }
+
   // Method: Main launching method
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
+
+    this.sortingByParam(this.pagesData, 'visitors');
 
     DataMethods.logger(this.pagesData, 'obj');
     const tabulator = new TabulatorMethods(this.pagesData, '#table-wrapper');
