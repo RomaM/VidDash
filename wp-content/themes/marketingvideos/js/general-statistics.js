@@ -17,8 +17,7 @@ window.GeneralStatistics = class {
 
     Object.keys(data).map((obj, i) => {
       const pageInstance = new PageStatistics(obj, data[obj]);
-      const pageResult = pageInstance.init(['10.08.2019', '31.12.2222']);
-
+      const pageResult = pageInstance.init(['01.07.2019', '31.12.2222']);
       this.pagesData[i] = pageResult;
     });
     return true;
