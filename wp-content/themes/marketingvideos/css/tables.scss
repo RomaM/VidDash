@@ -17,14 +17,17 @@
     border-bottom: 1.5px solid #333;
     font-weight: 400;
     color: #000;
-  }
-  .tabulator-header{
     .tabulator-col{
       border-right: none;
       background: #ffffff;
       display: flex;
       justify-content: stretch;
       align-items: center;
+      &.tabulator-sortable{
+        &:hover{
+          background-color: $table-header-hover;
+        }
+      }
     }
     .tabulator-headers{
       display: flex;
@@ -35,7 +38,7 @@
   .tabulator-row{
     &.tabulator-selectable{
       &:hover{
-        background-color: #efefef;
+        background-color: $table-header-hover;
       }
     }
     .tabulator-cell{

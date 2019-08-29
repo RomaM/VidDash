@@ -26,13 +26,16 @@
   justify-content: stretch;
   align-items: center; }
 
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
+  background-color: #f3f3f3; }
+
 .tabulator .tabulator-header .tabulator-headers {
   display: flex;
   padding: 10px 0;
   background: #fff; }
 
 .tabulator .tabulator-row.tabulator-selectable:hover {
-  background-color: #efefef; }
+  background-color: #f3f3f3; }
 
 .tabulator .tabulator-row .tabulator-cell {
   border-right: none; }
