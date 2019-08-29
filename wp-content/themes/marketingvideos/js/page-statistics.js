@@ -32,7 +32,8 @@ export default window.PageStatistics = class {
       pVideo: '',
       pLink: '',
       vDuration: 0,
-      dates: []
+      dates: [],
+      intervalData: []
     }
   }
 
@@ -110,6 +111,7 @@ export default window.PageStatistics = class {
     }
 
     processed.abandonment = processed.abandonment / 1000;
+    // DataMethods.logger(processed, 'obj');
     return processed;
   }
 
@@ -133,8 +135,15 @@ export default window.PageStatistics = class {
 
       if (obj == 'duration' && this.detailedInfo.vDuration == 0) {
         this.detailedInfo.vDuration = DataMethods.toTime(rawData[obj]);
-      } else if (obj == 'date' && filterDates.length === 2) {
+        // Creating array of intervals for the Video by 5 second steps
+        let intervals = Math.ceil(+rawData[obj] * .2);
+        this.detailedInfo.intervalData = Array(intervals);
 
+        for(let i=0; i<intervals; i++) {
+          this.detailedInfo.intervalData[i] = {viewers: 0, abandonment: 0, converted: 0};
+        }
+
+      } else if (obj == 'date' && filterDates.length === 2) {
         const dFrom = DataMethods.toDate(filterDates[0]);
         const dTo = DataMethods.toDate(filterDates[1]);
 
@@ -157,11 +166,6 @@ export default window.PageStatistics = class {
               const initialDevice = JSON.parse(currDevices[0]);
 
               localProcessedData.visitors++;
-
-              if (processedEvents.watchTime > 0) {
-                localProcessedData.viewers++;
-                timeArrs.watchTimeArr.push(processedEvents.watchTime);
-              }
 
               DataMethods.repeatedFields(localProcessedData.locations, currLocation, 'unknownLocation');
               DataMethods.repeatedFields(localProcessedData.devices, initialDevice['name'], 'unknownDevice');
@@ -190,7 +194,21 @@ export default window.PageStatistics = class {
 
               timeArrs.abandonmentTimeArr.push(processedEvents.abandonment);
 
-              // localProcessedData.failed += processedEvents.failed;
+              if (processedEvents.watchTime > 0) {
+                localProcessedData.viewers++;
+                timeArrs.watchTimeArr.push(processedEvents.watchTime);
+
+                // Setting data of Viewers/Abandonment/Converted for video by 5 second intervals
+                let intervalViewers = Math.ceil(processedEvents.watchTime / 5);
+
+                for(let i = 0; i < intervalViewers; i++) this.detailedInfo.intervalData[i].viewers++;
+
+                if (processedEvents.abandonment && processedEvents.watchTime > 0)
+                  this.detailedInfo.intervalData[intervalViewers].abandonment++;
+
+                if (processedEvents.converted[0] && processedEvents.watchTime > 0)
+                  this.detailedInfo.intervalData[intervalViewers].converted++;
+              }
             });
 
             localProcessedData.avgActiveView = DataMethods.avgAmount(timeArrs.activeView);
@@ -200,18 +218,16 @@ export default window.PageStatistics = class {
             localProcessedData.avgAbandonmentTime = DataMethods.avgAmount(timeArrs.abandonmentTimeArr);
 
             this.detailedInfo.dates.push(localProcessedData);
-
           }
         });
       }
     });
 
-    DataMethods.logger(this.detailedInfo, 'obj');
     return this.detailedInfo;
   }
 
   // Method: Summarizing processed data and convert to required format
-  convertToRequired(processedData) {
+  generalFormRecords(processedData) {
     let summarizedData = new ProcessedData([], 0, 0, {}, {}, {}, [0, 0], [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData)) {
 
@@ -287,9 +303,10 @@ export default window.PageStatistics = class {
     return (summarizedData.date.length > 0) ? summarizedData : null;
   }
 
-  // Method: List of most viewed pages on line statistics
-  // Method: Main launching method
-  init(filterDates) {
-    return this.convertToRequired(this.parseDataByDates(this.videoPageData, filterDates));
+  // Method: Collecting general data of a page for main form
+  generalData(filterDates) {
+    const parsedByDates = this.parseDataByDates(this.videoPageData, filterDates);
+    const generalFormData = this.generalFormRecords(parsedByDates);
+    return generalFormData;
   }
 }
