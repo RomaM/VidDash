@@ -4,7 +4,7 @@
     get_header();
 ?>
 
-<body>
+<body <?php is_user_logged_in() ?  body_class() : body_class("login wp-core-ui"); ?>>
 <?php if( is_user_logged_in()){ ?>
     <script type="module" src="<?php echo get_template_directory_uri(); ?>/js/general-statistics.js"></script>
     <div class="page">
@@ -12,7 +12,7 @@
         <h1 class="page__title">Video Dashboard</h1>
 
         <section class="charts">
-            <div class="charts__box">
+            <div class="charts__box charts__box-pie">
                 <p class="charts__subtitle">Failed to upload</p>
                 <div class="charts__chart">
                     <ul class="charts__chart-legend">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="charts__box">
+            <div class="charts__box charts__box-pie">
                 <p class="charts__subtitle">Stopped playing</p>
                 <div class="charts__chart">
                     <ul class="charts__chart-legend">
@@ -38,26 +38,43 @@
             <div class="charts__box">
                 <p class="charts__subtitle">Video views</p>
                 <div class="charts__views">
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
-                    <div class="charts__views-block"></div>
+                    <div class="charts__views-block">
+                        <div class="charts__views-title">
+                            <a href="">GWAY-19.08video</a>
+                        </div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+
+                    </div>
+                    <div class="charts__views-block">
+                        <div class="charts__views-title">
+                            <a href="">New Video for test</a>
+                        </div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                        <div class="charts__views-step"></div>
+                    </div>
                 </div>
             </div>
             <div class="charts__box">
@@ -79,7 +96,7 @@
           wp_footer();
         ?>
     </div>
-<?php }else {
+<?php } else {
     get_template_part( 'includes/login' );
 }?>
 

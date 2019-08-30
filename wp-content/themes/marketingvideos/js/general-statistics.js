@@ -57,5 +57,5 @@ window.GeneralStatistics = class {
     const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
     tabulator.init();
   }
-}
+};
 

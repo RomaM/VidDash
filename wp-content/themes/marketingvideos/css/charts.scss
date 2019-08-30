@@ -6,6 +6,9 @@
   align-content: flex-start;
   &__box {
     position: relative;
+    &-pie{
+      //max-width: 280px;
+    }
   }
   &__subtitle {
     font-size: 16px;
@@ -45,16 +48,22 @@
     }
   }
   &__views{
-    display: grid;
-    grid-template-columns: 30px 30px 30px 30px 30px;
     &-block{
+      display: flex;
+      justify-content: left;
+      flex-direction: row;
+      margin-bottom: 3px;
+    }
+    &-title{
+      min-width: 120px;
+      font-size: 14px;
+      background: red;
+      margin-right: 10px;
+    }
+    &-step{
       background: #d175ff;
-      margin: 2px;
-      height: 15px;
-      transition: opacity ease-out 0.2s;
-      &:hover{
-        opacity: 0.5;
-      }
+      min-width: 20px;
+      margin-right: 3px;
     }
   }
 }

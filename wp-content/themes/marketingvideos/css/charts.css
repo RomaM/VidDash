@@ -44,15 +44,19 @@
   color: #555;
   font-size: 14px; }
 
-.charts__views {
-  display: grid;
-  grid-template-columns: 30px 30px 30px 30px 30px; }
-
 .charts__views-block {
-  background: #d175ff;
-  margin: 2px;
-  height: 15px;
-  transition: opacity ease-out 0.2s; }
+  display: flex;
+  justify-content: left;
+  flex-direction: row;
+  margin-bottom: 3px; }
 
-.charts__views-block:hover {
-  opacity: 0.5; }
+.charts__views-title {
+  min-width: 120px;
+  font-size: 14px;
+  background: red;
+  margin-right: 10px; }
+
+.charts__views-step {
+  background: #d175ff;
+  min-width: 20px;
+  margin-right: 3px; }
