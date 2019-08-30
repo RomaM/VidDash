@@ -95,16 +95,17 @@
         <?php
           wp_footer();
         ?>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const instance = new GeneralStatistics(<?php echo $videoPages;?>);
+            instance.init();
+          });
+        </script>
     </div>
 <?php } else {
     get_template_part( 'includes/login' );
 }?>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const instance = new GeneralStatistics(<?php echo $videoPages;?>);
-    instance.init();
-	});
-</script>
 </body>
 </html>
