@@ -37,45 +37,7 @@
             </div>
             <div class="charts__box">
                 <p class="charts__subtitle">Video views</p>
-                <div class="charts__views">
-                    <div class="charts__views-block">
-                        <div class="charts__views-title">
-                            <a href="">GWAY-19.08video</a>
-                        </div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-
-                    </div>
-                    <div class="charts__views-block">
-                        <div class="charts__views-title">
-                            <a href="">New Video for test</a>
-                        </div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                        <div class="charts__views-step"></div>
-                    </div>
-                </div>
+                <div id="view-chart" class="charts__views"></div>
             </div>
             <div class="charts__box">
                 <p class="charts__subtitle">Distribution</p>
