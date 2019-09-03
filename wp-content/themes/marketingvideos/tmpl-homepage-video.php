@@ -37,7 +37,31 @@
             </div>
             <div class="charts__box">
                 <p class="charts__subtitle">Video views</p>
-                <div id="view-chart" class="charts__views"></div>
+                <div id="view-chart" class="charts__views">
+                    <div class="charts__timeline">
+                        <div class="charts__timeline-title">Time, s:</div>
+                        <div class="charts__timeline-time">
+                            <div class="charts__timeline-step">
+                                5
+                            </div>
+                            <div class="charts__timeline-step">
+                                10
+                            </div>
+                            <div class="charts__timeline-step">
+                                15
+                            </div>
+                            <div class="charts__timeline-step charts__timeline-middlestep">
+                                25
+                            </div>
+                            <div class="charts__timeline-step charts__timeline-middlestep">
+                                45
+                            </div>
+                            <div class="charts__timeline-step charts__timeline-largestep">
+                                60+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="charts__box">
                 <p class="charts__subtitle">Distribution</p>

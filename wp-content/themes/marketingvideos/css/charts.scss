@@ -1,4 +1,5 @@
 @import "../css/variables.scss";
+@import "../css/mixins.scss";
 
 .charts {
   display: flex;
@@ -16,7 +17,6 @@
   }
   &__chart{
     display: flex;
-
     &-pie{
       width: $pie-radius-desktop;
       height: $pie-radius-desktop;
@@ -48,10 +48,11 @@
     }
   }
   &__views{
-    overflow-x: auto;
-    overflow-y: visible;
     height: 100%;
-    width: 450px; //temporary, for horizontal scroll
+    position: relative;
+    &-wrapper{
+      margin-bottom: 20px;
+    }
     &-block{
       display: flex;
       justify-content: left;
@@ -59,11 +60,9 @@
       margin-bottom: 3px;
     }
     &-title{
-      min-width: 135px;
-      max-width: 135px;
-      font-size: 13px;
-      margin-right: 10px;
+      @include view-chart-title-width;
       overflow-wrap: break-word;
+      padding: 3px 0;
       a{
         color: $dark-grey;
         transition: opacity ease-out 0.2s;
@@ -75,18 +74,27 @@
       }
     }
     &-step{
-      background: $light-grey;
-      min-width: 10px;
+      background-color: $purple;
+      min-width: 30px;
       margin-right: 3px;
       position: relative;
-      &.viewed{
-        background: $purple;
-        &:hover{
-          .charts__views-popup{
-            visibility: visible;
-          }
+      transition: background-color ease-out 0.2s;
+      will-change: background-color;
+      &:nth-child(5), &:nth-child(6){
+        background-color: $purple-light;
+        min-width: 40px;
+      }
+      &:nth-child(7){
+        background-color: $purple-pastel;
+        min-width: 60px;
+      }
+      &:hover{
+        background-color: $purple-hover;
+        .charts__views-popup{
+          visibility: visible;
         }
       }
+
     }
     &-popup{
       position: absolute;
@@ -120,6 +128,38 @@
       }
 
 
+    }
+  }
+  &__timeline{
+    position: absolute;
+    bottom: 0;
+    height: 17px;
+    display: flex;
+    &-title{
+      @include view-chart-title-width;
+      font-weight: 700;
+    }
+    &-time{
+      border-bottom: 1px solid #555;
+      margin-bottom: -1px;
+      display: flex;
+    }
+    &-step{
+      min-width: 29px;
+      border-right: 1px solid #555;
+      text-align: right;
+      padding-right: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      bottom: 8px;
+      color: #555;
+    }
+    &-middlestep{
+      min-width: 39px;
+    }
+    &-largestep{
+      min-width: 59px;
+      border-right: none;
     }
   }
 }

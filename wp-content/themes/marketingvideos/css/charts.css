@@ -1,6 +1,7 @@
 /*colors*/
 /*helpers*/
 /*colors*/
+/*charts*/
 .charts {
   display: flex;
   justify-content: space-between;
@@ -46,10 +47,11 @@
   font-size: 14px; }
 
 .charts__views {
-  overflow-x: auto;
-  overflow-y: visible;
   height: 100%;
-  width: 450px; }
+  position: relative; }
+
+.charts__views-wrapper {
+  margin-bottom: 20px; }
 
 .charts__views-block {
   display: flex;
@@ -60,9 +62,10 @@
 .charts__views-title {
   min-width: 135px;
   max-width: 135px;
-  font-size: 13px;
   margin-right: 10px;
-  overflow-wrap: break-word; }
+  font-size: 13px;
+  overflow-wrap: break-word;
+  padding: 3px 0; }
 
 .charts__views-title a {
   color: #555555;
@@ -74,15 +77,25 @@
   text-decoration: underline; }
 
 .charts__views-step {
-  background: #e0d5e9;
-  min-width: 10px;
+  background-color: #662c91;
+  min-width: 30px;
   margin-right: 3px;
-  position: relative; }
+  position: relative;
+  transition: background-color ease-out 0.2s;
+  will-change: background-color; }
 
-.charts__views-step.viewed {
-  background: #d175ff; }
+.charts__views-step:nth-child(5), .charts__views-step:nth-child(6) {
+  background-color: #b295c8;
+  min-width: 40px; }
 
-.charts__views-step.viewed:hover .charts__views-popup {
+.charts__views-step:nth-child(7) {
+  background-color: #e0d5e9;
+  min-width: 60px; }
+
+.charts__views-step:hover {
+  background-color: #8556a7; }
+
+.charts__views-step:hover .charts__views-popup {
   visibility: visible; }
 
 .charts__views-popup {
@@ -115,3 +128,38 @@
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.75));
   right: -17px;
   top: -20px; }
+
+.charts__timeline {
+  position: absolute;
+  bottom: 0;
+  height: 17px;
+  display: flex; }
+
+.charts__timeline-title {
+  min-width: 135px;
+  max-width: 135px;
+  margin-right: 10px;
+  font-size: 13px;
+  font-weight: 700; }
+
+.charts__timeline-time {
+  border-bottom: 1px solid #555;
+  margin-bottom: -1px;
+  display: flex; }
+
+.charts__timeline-step {
+  min-width: 29px;
+  border-right: 1px solid #555;
+  text-align: right;
+  padding-right: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  bottom: 8px;
+  color: #555; }
+
+.charts__timeline-middlestep {
+  min-width: 39px; }
+
+.charts__timeline-largestep {
+  min-width: 59px;
+  border-right: none; }
