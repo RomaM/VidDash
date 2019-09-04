@@ -1,16 +1,18 @@
 /*colors*/
 /*helpers*/
+/*colors*/
 .tabulator {
   box-sizing: border-box;
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
-  border-top: 1.5px solid #333;
+  border-top: 4px solid #333;
   border-left: none;
   margin-top: 20px; }
 
 .tabulator-title {
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 700;
   color: #000;
   margin: 30px auto auto 10px; }
 
@@ -28,6 +30,13 @@
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
   background-color: #f3f3f3; }
+
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
+  font-size: 16px; }
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent; }
 
 .tabulator .tabulator-header .tabulator-headers {
   display: flex;

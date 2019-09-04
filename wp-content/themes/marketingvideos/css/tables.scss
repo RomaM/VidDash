@@ -5,11 +5,12 @@
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   border: none;
-  border-top: 1.5px solid #333;
+  border-top: 4px solid #333;
   border-left: none;
   margin-top: 20px;
   &-title{
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 700;
     color: #000;
     margin: 30px auto auto 10px;
   }
@@ -27,8 +28,18 @@
         &:hover{
           background-color: $table-header-hover;
         }
+        .tabulator-col-title{
+          font-size: 16px;
+        }
+      }
+      .tabulator-col-content{
+        .tabulator-arrow{
+          border-left: 3px solid transparent;
+          border-right: 3px solid transparent;
+        }
       }
     }
+
     .tabulator-headers{
       display: flex;
       padding: 10px 0;

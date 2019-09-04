@@ -1,4 +1,5 @@
 @import "../css/variables.scss";
+@import "../css/mixins.scss";
 
 .charts {
   display: flex;
@@ -16,7 +17,6 @@
   }
   &__chart{
     display: flex;
-
     &-pie{
       width: $pie-radius-desktop;
       height: $pie-radius-desktop;
@@ -43,11 +43,16 @@
       margin: 0;
       padding: 0;
       margin-right: 10px;
-      color: #555;
+      color: $dark-grey;
       font-size: 14px;
     }
   }
   &__views{
+    height: 100%;
+    position: relative;
+    &-wrapper{
+      margin-bottom: 20px;
+    }
     &-block{
       display: flex;
       justify-content: left;
@@ -55,15 +60,120 @@
       margin-bottom: 3px;
     }
     &-title{
-      min-width: 120px;
-      font-size: 14px;
-      background: red;
-      margin-right: 10px;
+      @include view-chart-title-width;
+      overflow-wrap: break-word;
+      padding: 3px 0;
+      a{
+        color: $dark-grey;
+        transition: opacity ease-out 0.2s;
+        text-decoration: none;
+        &:hover{
+          opacity: 0.7;
+          text-decoration: underline;
+        }
+      }
     }
     &-step{
-      background: #d175ff;
-      min-width: 20px;
+      background-color: $purple;
+      min-width: 30px;
       margin-right: 3px;
+      position: relative;
+      transition: background-color ease-out 0.2s;
+      will-change: background-color;
+      &:nth-child(5), &:nth-child(6){
+        background-color: $purple-light;
+        min-width: 40px;
+      }
+      &:nth-child(7){
+        background-color: $purple-pastel;
+        min-width: 60px;
+      }
+      &:hover{
+        background-color: $purple-hover;
+        .charts__views-popup{
+          visibility: visible;
+        }
+      }
+      &.noviews{
+        background-color: $light-grey;
+      }
+
+    }
+    &-popup{
+      position: absolute;
+      top: 5px;
+      left: -95px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.35);
+      visibility: hidden;
+      z-index: 9;
+      ul{
+        padding-left: 0;
+        position: relative;
+        li{
+          list-style-type: none;
+          font-size: 12px;
+        }
+        &::after{
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-top: 7px solid transparent;
+          border-bottom: 7px solid transparent;
+          border-left: 7px solid rgba(255,255,255,0.9);
+          filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.75));
+          right: -17px;
+          top: -20px;
+        }
+      }
+
+
+    }
+  }
+  &__timeline{
+    position: absolute;
+    bottom: 0;
+    height: 17px;
+    display: flex;
+    &::after{
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 9px solid #555555;
+      right: -9px;
+      top: 14px;
+    }
+    &-title{
+      @include view-chart-title-width;
+      font-weight: 700;
+    }
+    &-time{
+      border-bottom: 1px solid #555;
+      margin-bottom: -1px;
+      display: flex;
+    }
+    &-step{
+      min-width: 29px;
+      border-right: 1px solid #555;
+      text-align: right;
+      padding-right: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      bottom: 8px;
+      color: #555;
+    }
+    &-middlestep{
+      min-width: 39px;
+    }
+    &-largestep{
+      min-width: 59px;
+      border-right: none;
     }
   }
 }
