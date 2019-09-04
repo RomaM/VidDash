@@ -19,7 +19,7 @@ export default window.ChartMethods = class {
               <a href="${e.pageLink}">${linkUrl}</a>
             </div>
             ${this.dataRestruct(e).map((data) => `
-              <div class="charts__views-step">
+              <div class="charts__views-step ${data.viewers ? '' : 'noviews'}">
                 <div class="charts__views-popup">
                   <ul>
                     <li>viewers: ${data.viewers}</li>

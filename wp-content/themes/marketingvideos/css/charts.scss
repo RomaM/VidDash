@@ -94,6 +94,9 @@
           visibility: visible;
         }
       }
+      &.noviews{
+        background-color: $light-grey;
+      }
 
     }
     &-popup{
@@ -135,6 +138,17 @@
     bottom: 0;
     height: 17px;
     display: flex;
+    &::after{
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 9px solid #555555;
+      right: -9px;
+      top: 14px;
+    }
     &-title{
       @include view-chart-title-width;
       font-weight: 700;
