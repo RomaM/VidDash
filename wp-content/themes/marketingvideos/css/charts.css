@@ -60,8 +60,8 @@
   margin-bottom: 3px; }
 
 .charts__views-title {
-  min-width: 135px;
-  max-width: 135px;
+  min-width: 150px;
+  max-width: 150px;
   margin-right: 10px;
   font-size: 13px;
   overflow-wrap: break-word;
@@ -150,8 +150,8 @@
   top: 14px; }
 
 .charts__timeline-title {
-  min-width: 135px;
-  max-width: 135px;
+  min-width: 150px;
+  max-width: 150px;
   margin-right: 10px;
   font-size: 13px;
   font-weight: 700; }
