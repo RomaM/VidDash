@@ -45,7 +45,7 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
-    const mostViewedPageNames = this.getMostViewedPagesNames(this.pagesTableData, 'visitors', 3);
+    const mostViewedPageNames = this.getMostViewedPagesNames(this.pagesTableData, 'visitors', 3); 
 
     this.pagesTableData.map(page => {
       if (mostViewedPageNames.includes(page['pLink']))
