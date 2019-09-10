@@ -37,7 +37,7 @@ export default window.PageStatistics = class {
     }
   }
 
-  // Method: Parse list of events for a single user
+  // Method: Parse list of events for a single user and return larges values of all sessions
   parseEvents(events) {
     const processed = {
       watchTime: 0,
@@ -63,16 +63,20 @@ export default window.PageStatistics = class {
         case ('userLeave'):
         case ('mobileTouch'):
         case ('submit'):
-          if (processed.activeView == 0) processed.activeView = single['videoTime'];
-          processed.watchTime = single['videoTime'];
-          processed.abandonment = single['timestamp'];
+          processed.activeView = processed.activeView < single['videoTime'] ? single['videoTime'] : processed.activeView;
+          processed.watchTime = processed.watchTime < single['videoTime'] ? single['videoTime'] : processed.watchTime;
+          processed.abandonment = processed.abandonment < single['timestamp'] ? single['timestamp'] : processed.abandonment;
 
-          if (single['event'] == 'submit') processed.converted = [true, single['videoTime']];
+          if (single['event'] == 'submit') {
+            processed.converted = [true, processed.converted[1] < single['videoTime'] ? single['videoTime'] : processed.converted[1]];
+          }
 
           if (single['videoTime'] > 0) processed.failed = [false, 'error'];
           break;
         case ('muted'):
-          if (processed.muted[0] == false) processed.muted = [true, single['videoTime']];
+          if (processed.muted[0] == false) {
+            processed.muted = [true, processed.muted[1] < single['videoTime'] ? single['videoTime'] : processed.muted[1]];
+          }
           break;
         case ('unmuted'):
           processed.muted[0] = false;
@@ -111,7 +115,6 @@ export default window.PageStatistics = class {
     }
 
     processed.abandonment = processed.abandonment / 1000;
-    // DataMethods.logger(processed, 'obj');
     return processed;
   }
 
