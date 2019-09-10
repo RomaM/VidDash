@@ -19,12 +19,11 @@ export default window.PieMethods = class {
   }
 
   pieBuild() {
-    const failedArr = [], stoppedArr = [], viewersArr = [];
+    const failedArr = [], stoppedArr = [];
     let failed = 0, stopped = 0;
-    this.data.map( e => { failedArr.push(e.failed); stoppedArr.push(e.stopped); viewersArr.push(e.viewers)});
-    failed = DataMethods.toPercent(DataMethods.sumAmount(failedArr), DataMethods.sumAmount(viewersArr));
-    stopped = DataMethods.toPercent(DataMethods.sumAmount(stoppedArr), DataMethods.sumAmount(viewersArr));
-
+    this.data.map( e => { failedArr.push(e.failed); stoppedArr.push(e.stopped);});
+    failed = DataMethods.avgAmount(failedArr);
+    stopped = DataMethods.avgAmount(stoppedArr);
     this.pieCalculation(document.getElementById(this.pieStopped), stopped);
     this.pieCalculation(document.getElementById(this.pieFailed), failed);
   }
