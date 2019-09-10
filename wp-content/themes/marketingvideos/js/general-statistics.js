@@ -55,7 +55,7 @@ window.GeneralStatistics = class {
 
     DataMethods.logger(this.pagesTableData, 'obj');
 
-    DataMethods.logger(this.pagesMostViewedData, 'obj');
+    // DataMethods.logger(this.pagesMostViewedData, 'obj');
 
     const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
     const customCharts = new ChartMethods(this.pagesMostViewedData, '#view-chart');

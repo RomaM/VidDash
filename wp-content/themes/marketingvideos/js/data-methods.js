@@ -27,8 +27,8 @@ export default class DataMethods {
   // Method: Calculate an average data from an array
   static avgAmount(arrToAvg) {
     (arrToAvg.length > 0) ? arrToAvg : arrToAvg = [0];
-    let sum = arrToAvg.reduce((acc, el) => {return acc + parseInt(el, 10)}, 0);
-    return sum / arrToAvg.length;
+    let sum = arrToAvg.reduce((acc, el) => {return acc + el}, 0);
+    return Math.round(sum / arrToAvg.length);
   }
 
   // Method: Add a node element to a parrent

@@ -4,7 +4,7 @@ export default window.TabulatorMethods = class {
   constructor(pagesData, tableWrapper){
     this.pagesData = pagesData;
     this.tableWrapper = tableWrapper;
-    DataMethods.logger(this.pagesData, 'obj')
+    //DataMethods.logger(this.pagesData, 'obj')
   };
 
   // config table columns
