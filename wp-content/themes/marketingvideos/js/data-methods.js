@@ -63,4 +63,10 @@ export default class DataMethods {
     const percentage = Math.round((amount / quantity) * 100);
     return percentage;
   }
+
+  //Method: Sum all elements of given array
+  static sumAmount(array) {
+    const result = array.reduce((a, b) => a + b, 0);
+    return result;
+  }
 }
