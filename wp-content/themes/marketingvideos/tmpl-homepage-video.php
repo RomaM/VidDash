@@ -16,11 +16,13 @@
                 <p class="charts__subtitle">Failed to upload</p>
                 <div class="charts__chart">
                     <ul class="charts__chart-legend">
-                        <li>15% - Internet</li>
-                        <li>85% - CDN</li>
+                        <li><span class="js-error">15</span>% - Failed</li>
                     </ul>
                     <div class="charts__chart-pie">
-                        <div class="charts__chart-pieborder"></div>
+                        <svg class="progress" width="160" height="160" viewBox="0 0 160 160">
+                            <circle class="progress__meter" cx="80" cy="80" r="78" stroke-width="4" />
+                            <circle class="progress__value" id="progress-failed" cx="80" cy="80" r="78" stroke-width="4" />
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -28,10 +30,13 @@
                 <p class="charts__subtitle">Stopped playing</p>
                 <div class="charts__chart">
                     <ul class="charts__chart-legend">
-                        <li>15% - Stopped</li>
+                        <li><span class="js-error">15</span>% - Stopped</li>
                     </ul>
                     <div class="charts__chart-pie">
-                        <div class="charts__chart-pieborder"></div>
+                        <svg class="progress"  width="160" height="160" viewBox="0 0 160 160">
+                            <circle class="progress__meter" cx="80" cy="80" r="78" stroke-width="4" />
+                            <circle class="progress__value" id="progress-stopped" cx="80" cy="80" r="78" stroke-width="4" />
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -71,12 +76,6 @@
 
         <h2 class="tabulator-title">Engagement:</h2>
         <div id="table-wrapper"></div>
-
-        <script>
-          var generalData = <?php echo $videoPages?>;
-          var dataParsing = new Data(generalData);
-          dataParsing.init();
-        </script>
 
         <?php
           wp_footer();
