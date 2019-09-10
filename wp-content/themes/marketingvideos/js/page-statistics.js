@@ -63,9 +63,11 @@ export default window.PageStatistics = class {
         case ('userLeave'):
         case ('mobileTouch'):
         case ('submit'):
-          processed.activeView = processed.activeView < single['videoTime'] ? single['videoTime'] : processed.activeView;
           processed.watchTime = processed.watchTime < single['videoTime'] ? single['videoTime'] : processed.watchTime;
           processed.abandonment = processed.abandonment < single['timestamp'] ? single['timestamp'] : processed.abandonment;
+          if (single['event'] != 'mobileTouch') {
+            processed.activeView = processed.activeView < single['videoTime'] ? single['videoTime'] : processed.activeView;
+          }
 
           if (single['event'] == 'submit') {
             processed.converted = [true, processed.converted[1] < single['videoTime'] ? single['videoTime'] : processed.converted[1]];
