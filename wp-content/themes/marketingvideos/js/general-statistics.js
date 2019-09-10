@@ -1,5 +1,7 @@
 import DataMethods from './data-methods.js';
 import PageStatistics from './page-statistics.js';
+import TabulatorMethods from './tabulator-methods.js';
+import ChartMethods from './charts-methods.js';
 
 window.GeneralStatistics = class {
   constructor(rawData) {
@@ -43,7 +45,7 @@ window.GeneralStatistics = class {
   init() {
     if (!this.parseGlobalObject(this.rawData)) return false;
 
-    const mostViewedPageNames = this.getMostViewedPagesNames(this.pagesTableData, 'visitors', 2);
+    const mostViewedPageNames = this.getMostViewedPagesNames(this.pagesTableData, 'visitors', 3); 
 
     this.pagesTableData.map(page => {
       if (mostViewedPageNames.includes(page['pLink']))
@@ -52,6 +54,12 @@ window.GeneralStatistics = class {
 
     DataMethods.logger(this.pagesTableData, 'obj');
 
-    DataMethods.logger(this.pagesMostViewedData, 'obj');
+    // DataMethods.logger(this.pagesMostViewedData, 'obj');
+
+    const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
+    const customCharts = new ChartMethods(this.pagesMostViewedData, '#view-chart');
+    tabulator.init();
+    customCharts.init();
   }
-}
+};
+

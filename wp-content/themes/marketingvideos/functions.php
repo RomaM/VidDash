@@ -77,6 +77,11 @@ function page_assets_includes() {
         wp_register_script('OLD-general-statistics', get_template_directory_uri().
             '/js/OLD-general-statistics.js', array(), time(), false); // Custom scripts
         wp_enqueue_script('OLD-general-statistics'); // Enqueue it!
+
+        //tabulator library
+        wp_register_script('tabulator', get_template_directory_uri().
+            '/js/tabulator.min.js', array(), time(), false); // Custom scripts
+        wp_enqueue_script('tabulator'); // Enqueue it!
     }
 }
 

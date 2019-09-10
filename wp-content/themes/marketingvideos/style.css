@@ -1,10 +1,7 @@
 @import url(css/normalize.css);
-.loading {
-  display: none;
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: white url("../img/loading.gif") no-repeat center; }
+@import url(css/variables.css);
+@import url(css/content.css);
+@import url(css/tabulator.min.css);
+@import url(css/tables.css);
+@import url(css/charts.css);
+
