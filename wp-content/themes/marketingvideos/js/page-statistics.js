@@ -271,7 +271,6 @@ export default window.PageStatistics = class {
           summarizedData.avgActiveView += el.avgActiveView;
           summarizedData.avgConvertedTime += el.avgConvertedTime;
           summarizedData.avgAbandonmentTime += el.avgAbandonmentTime;
-
       });
 
       /* Percentage of Vertical/Horizontal viewing for mobile devices */
