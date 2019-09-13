@@ -1,4 +1,3 @@
-/*colors*/
 /*helpers*/
 /*colors*/
 /*charts*/
@@ -18,12 +17,21 @@
   display: flex; }
 
 .charts__chart-pie {
-  width: 170px;
-  height: 170px;
-  margin: 0 0 0 0px;
-  border-radius: 50%;
-  border: 3px solid #8d46d9;
   position: relative; }
+
+.charts__chart-pie .progress {
+  transform: rotate(-90deg); }
+
+.charts__chart-pie .progress__meter,
+.charts__chart-pie .progress__value {
+  fill: none; }
+
+.charts__chart-pie .progress__meter {
+  stroke: #f3f3f3; }
+
+.charts__chart-pie .progress__value {
+  stroke: #8d46d9;
+  stroke-linecap: round; }
 
 .charts__chart-pieborder {
   position: absolute;
