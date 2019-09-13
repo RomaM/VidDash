@@ -65,7 +65,7 @@ export default window.PageStatistics = class {
         case ('submit'):
           processed.watchTime = processed.watchTime < single['videoTime'] ? single['videoTime'] : processed.watchTime;
           processed.abandonment = processed.abandonment < single['timestamp'] ? single['timestamp'] : processed.abandonment;
-          if (single['event'] != 'mobileTouch') {
+          if (single['event'] != 'mobileTouch' && processed.activeView == 0) {
             processed.activeView = processed.activeView < single['videoTime'] ? single['videoTime'] : processed.activeView;
           }
 
