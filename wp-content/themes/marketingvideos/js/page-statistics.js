@@ -84,7 +84,9 @@ export default window.PageStatistics = class {
           processed.muted[0] = false;
           break;
         case ('formfocus'):
-          if (processed.activeView == 0) processed.activeView = single['videoTime'];
+          if (processed.activeView == 0 && single['videoTime'] != 0) {
+            processed.activeView = single['videoTime']
+          };
           break;
         case ('ScrollOut'):
           if (processed.activeView == 0) processed.activeView = single['videoTime'];
@@ -124,13 +126,7 @@ export default window.PageStatistics = class {
   parseDataByDates(rawData, filterDates) {
     let localProcessedData = {};
     let processedEvents = {};
-    let timeArrs = {
-      activeView: [],
-      watchTimeArr: [],
-      scrollTimeArr: [],
-      convertedTimeArr: [],
-      abandonmentTimeArr: []
-    };
+    let timeArrs = {};
 
     /* Get static info about a page */
     let data = this.videoPageInfo.split('|');
@@ -157,6 +153,14 @@ export default window.PageStatistics = class {
           let elDate = DataMethods.toDate(currDate);
 
           if(elDate >= dFrom && elDate <= dTo) {
+
+            timeArrs = {
+              activeView: [],
+              watchTimeArr: [],
+              scrollTimeArr: [],
+              convertedTimeArr: [],
+              abandonmentTimeArr: []
+            };
 
             localProcessedData =
               new ProcessedData('', 0, 0, {'unknownLocation': 0}, {'unknownDevice': 0}, {'unknownBrowser': 0}, [0, 0], [], 0, 0, 0, 0, 0, 0, 0);
