@@ -239,42 +239,66 @@ export default window.PageStatistics = class {
   generalFormRecords(processedData) {
     let summarizedData = new ProcessedData([], 0, 0, {}, {}, {}, [0, 0], [0, 0], 0, 0, 0, 0, 0, 0, 0);
     if (!DataMethods.objEmpty(processedData)) {
+      let timeArrsCounter = {
+        activeView: 0,
+        watchTime: 0,
+        scrollTime: 0,
+        convertedTime: 0,
+        abandonmentTime: 0
+      };
 
       processedData['dates'].map(el => {
-          summarizedData.date.push(el.date);
-          summarizedData.viewers += el.viewers;
-          summarizedData.visitors += el.visitors;
+        summarizedData.date.push(el.date);
+        summarizedData.viewers += el.viewers;
+        summarizedData.visitors += el.visitors;
 
-          Object.keys(el.locations).map(location => {
-            if(summarizedData.locations.hasOwnProperty(location)) summarizedData.locations[location] += el.locations[location];
-            else summarizedData.locations[location] = el.locations[location];
-          });
+        Object.keys(el.locations).map(location => {
+          if(summarizedData.locations.hasOwnProperty(location)) summarizedData.locations[location] += el.locations[location];
+          else summarizedData.locations[location] = el.locations[location];
+        });
 
-          Object.keys(el.devices).map(device => {
-            if(summarizedData.devices.hasOwnProperty(device)) summarizedData.devices[device] += el.devices[device];
-            else summarizedData.devices[device] = el.devices[device];
-          });
+        Object.keys(el.devices).map(device => {
+          if(summarizedData.devices.hasOwnProperty(device)) summarizedData.devices[device] += el.devices[device];
+          else summarizedData.devices[device] = el.devices[device];
+        });
 
-          Object.keys(el.browsers).map(browser => {
-            if(summarizedData.browsers.hasOwnProperty(browser)) summarizedData.browsers[browser] += el.browsers[browser];
-            else summarizedData.browsers[browser] = el.browsers[browser];
-          });
+        Object.keys(el.browsers).map(browser => {
+          if(summarizedData.browsers.hasOwnProperty(browser)) summarizedData.browsers[browser] += el.browsers[browser];
+          else summarizedData.browsers[browser] = el.browsers[browser];
+        });
 
-          summarizedData.orientations['0'] += el.orientations['0']; // Portrait
-          summarizedData.orientations['1'] += el.orientations['1']; // Landscape
+        summarizedData.orientations['0'] += el.orientations['0']; // Portrait
+        summarizedData.orientations['1'] += el.orientations['1']; // Landscape
 
-          el.muted.map(singleMute => {
-            summarizedData.muted['0']++; /* Amount of muted users */
-            summarizedData.muted['1'] += singleMute['1']; /* Average of muted time */
-          });
+        el.muted.map(singleMute => {
+          summarizedData.muted['0']++; /* Amount of muted users */
+          summarizedData.muted['1'] += singleMute['1']; /* Average of muted time */
+        });
 
-          summarizedData.stopped += el.stopped;
-          summarizedData.failed += el.failed;
+        summarizedData.stopped += el.stopped;
+        summarizedData.failed += el.failed;
+
+        if (el.avgWatchTime > 0) {
           summarizedData.avgWatchTime += el.avgWatchTime;
+          timeArrsCounter.watchTime += 1;
+        }
+        if (el.avgScrollTime > 0) {
           summarizedData.avgScrollTime += el.avgScrollTime;
+          timeArrsCounter.scrollTime += 1;
+        }
+        if (el.avgActiveView > 0) {
           summarizedData.avgActiveView += el.avgActiveView;
+          timeArrsCounter.activeView += 1;
+        }
+        if (el.avgConvertedTime > 0) {
           summarizedData.avgConvertedTime += el.avgConvertedTime;
+          timeArrsCounter.convertedTime += 1;
+        }
+        if (el.avgAbandonmentTime > 0) {
           summarizedData.avgAbandonmentTime += el.avgAbandonmentTime;
+          timeArrsCounter.abandonmentTime += 1;
+        }
+
       });
 
       /* Percentage of Vertical/Horizontal viewing for mobile devices */
@@ -299,11 +323,16 @@ export default window.PageStatistics = class {
         if (summarizedData.stopped > 0) {summarizedData.stopped = DataMethods.toPercent(summarizedData.stopped, summarizedData.visitors)};
         if (summarizedData.failed > 0) {summarizedData.failed = DataMethods.toPercent(summarizedData.failed, summarizedData.visitors)};
 
-        summarizedData.avgWatchTime = DataMethods.toTime(summarizedData.avgWatchTime / summarizedData.date.length);
-        summarizedData.avgScrollTime = DataMethods.toTime(summarizedData.avgScrollTime / summarizedData.date.length);
-        summarizedData.avgActiveView = DataMethods.toTime(summarizedData.avgActiveView / summarizedData.date.length);
-        summarizedData.avgConvertedTime = DataMethods.toTime(summarizedData.avgConvertedTime / summarizedData.date.length);
-        summarizedData.avgAbandonmentTime = DataMethods.toTime(summarizedData.avgAbandonmentTime / summarizedData.date.length);
+        summarizedData.avgWatchTime =
+          DataMethods.toTime(summarizedData.avgWatchTime / timeArrsCounter.watchTime);
+        summarizedData.avgScrollTime =
+          DataMethods.toTime(summarizedData.avgScrollTime / timeArrsCounter.scrollTime);
+        summarizedData.avgActiveView =
+          DataMethods.toTime(summarizedData.avgActiveView / timeArrsCounter.activeView);
+        summarizedData.avgConvertedTime =
+          DataMethods.toTime(summarizedData.avgConvertedTime / timeArrsCounter.convertedTime);
+        summarizedData.avgAbandonmentTime =
+          DataMethods.toTime(summarizedData.avgAbandonmentTime / timeArrsCounter.abandonmentTime);
       }
     }
 

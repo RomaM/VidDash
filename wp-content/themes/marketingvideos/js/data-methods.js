@@ -47,10 +47,10 @@ export default class DataMethods {
 
   // Method: Round seconds and convert to time
   static toTime(number = 0) {
+    if (!number) return 0;
     let measuredTime = new Date(null);
     measuredTime.setSeconds(Math.round(number));
     return measuredTime.toISOString().substr(11, 8);
-
   }
 
   static toDate(string = '1.1.1111') {
