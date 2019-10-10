@@ -70,7 +70,9 @@
             </div>
             <div class="charts__box">
                 <p class="charts__subtitle">Distribution</p>
-                World pecentage
+                <div id="map-container" style="position: relative; width: 450px; height: 190px;">
+
+                </div>
             </div>
         </section>
 
