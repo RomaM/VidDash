@@ -3,6 +3,7 @@ import PageStatistics from './page-statistics.js';
 import TabulatorMethods from './tabulator-methods.js';
 import ChartMethods from './charts-methods.js';
 import PieMethods from './pie-methods.js';
+import MapMethods from './map-methods.js';
 
 window.GeneralStatistics = class {
   constructor(rawData) {
@@ -60,9 +61,12 @@ window.GeneralStatistics = class {
     const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
     const customCharts = new ChartMethods(this.pagesMostViewedData, '#view-chart');
     const pieMethods = new PieMethods(this.pagesTableData, 'progress-stopped', 'progress-failed');
+    const mapMethods = new MapMethods(this.pagesTableData, 'map-container');
+
     tabulator.init();
     customCharts.init();
     pieMethods.init();
+    mapMethods.init();
   }
 };
 
