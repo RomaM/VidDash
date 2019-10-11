@@ -53,17 +53,15 @@ export default window.MapMethods = class {
       geographyConfig: {
         popupTemplate: (geo, data) => {
           return `
-            <div class="map__hover-popup">
+            <div class="map__popup">
                 <p>${geo.properties.name}</p>
-                <p>Users: ${data.number}</p>
+                <p>Users: <b>${data.number}</b></p>
             </div>
           `
         }
       }
     };
-
     const map = new Datamap(options);
-    /*map.legend();*/
   }
 
   init(){
