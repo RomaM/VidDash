@@ -73,12 +73,24 @@ function page_assets_includes() {
             '/style.css', array(), time(), 'all');
         wp_enqueue_style('theme_styles'); // Enqueue it!
 
+        wp_register_script('d3', get_template_directory_uri().
+            '/js/d3.min.js', array(), time(), false);
+        wp_enqueue_script('d3');
+
+        wp_register_script('topojson', get_template_directory_uri().
+            '/js/topojson.min.js', array(), time(), false);
+        wp_enqueue_script('topojson');
+
         //general statistics file
         /*wp_register_script('OLD-general-statistics', get_template_directory_uri().
             '/js/OLD-general-statistics.js', array(), time(), false); // Custom scripts
         wp_enqueue_script('OLD-general-statistics'); // Enqueue it!*/
 
         //tabulator library
+
+        wp_register_script('worldmap', get_template_directory_uri().
+        '/js/datamaps.world.min.js', array(), time(), false);
+        wp_enqueue_script('worldmap');
         wp_register_script('tabulator', get_template_directory_uri().
             '/js/tabulator.min.js', array(), time(), false); // Custom scripts
         wp_enqueue_script('tabulator'); // Enqueue it!
