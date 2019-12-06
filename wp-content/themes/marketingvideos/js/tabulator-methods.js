@@ -9,6 +9,9 @@ export default window.TabulatorMethods = class {
 
   // config table columns
   static generateColumns(){
+
+
+
     const nullFormatter = (cell) => {
       return cell.getValue() !== 0 ? cell.getValue() :  DataMethods.toTime(cell.getValue())
     };
