@@ -16,7 +16,7 @@ export default window.ChartMethods = class {
         <div>
           <div class="charts__views-block">
             <div class="charts__views-title">
-              <a href="${e.pageLink}">${linkUrl}</a>
+              <a target="_blank" href="${e.pageLink}">${linkUrl}</a>
             </div>
             ${this.dataRestruct(e).map((data) => `
               <div class="charts__views-step ${data.viewers ? '' : 'noviews'}">

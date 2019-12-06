@@ -9,6 +9,9 @@ export default window.TabulatorMethods = class {
 
   // config table columns
   static generateColumns(){
+    const nullFormatter = (cell) => {
+      return cell.getValue() !== '0' ? cell.getValue() :  DataMethods.toTime(+cell.getValue())
+    };
 
     return [
       {title:"", field:"pDomain", headerFilter: 'input',
@@ -21,16 +24,22 @@ export default window.TabulatorMethods = class {
       {title:"Viewers", field:"viewers", width: 88, align:"left", resizable: false},
       {title:"Visitors", field:"visitors", width: 88, align:"left", resizable: false},
       {title:"Vrt./Hor.", field:"orientations", width: 90, align:"left", resizable: false,
-        formatter: function(cell){
+        formatter: (cell) => {
           return cell.getValue().split(",")[0] + "% " + "/" + cell.getValue().split(",")[1] + "%"
-        }},
+        }
+      },
       {title:"Mute", field: "muted", align:"left", width: 80, resizable: false,
-        formatter: function(cell){
+        formatter: (cell) => {
           return cell.getValue().split(",")[0] + "%"
-        }},
+        }
+      },
       {title:"Active view", field:"avgActiveView", align:"left", width: 120, resizable: false},
-      {title:"Scrolling", field:"avgScrollTime", align:"left", width: 110, resizable: false},
-      {title:"Converted", field:"avgConvertedTime", align:"left", width: 110, resizable: false},
+      {title:"Scrolling", field:"avgScrollTime", align:"left", width: 110, resizable: false,
+        formatter: cell => nullFormatter(cell)
+      },
+      {title:"Converted", field:"avgConvertedTime", align:"left", width: 110, resizable: false,
+        formatter: cell => nullFormatter(cell)
+      },
       {title:"Avg. aband.", field:"avgAbandonmentTime", width: 120, resizable: false},
     ];
   }
