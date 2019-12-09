@@ -13,7 +13,7 @@ export default window.TabulatorMethods = class {
 
 
     const nullFormatter = (cell) => {
-      return cell.getValue() !== 0 ? cell.getValue() :  DataMethods.toTime(cell.getValue())
+      return (cell.getValue() !== 0 || cell.getValue() !== '0') ? cell.getValue() :  DataMethods.toTime(cell.getValue())
     };
 
     return [
