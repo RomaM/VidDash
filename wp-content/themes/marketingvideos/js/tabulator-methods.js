@@ -10,10 +10,8 @@ export default window.TabulatorMethods = class {
   // config table columns
   static generateColumns(){
 
-
-
-    const nullFormatter = (cell) => {
-      return (cell.getValue() !== 0 || cell.getValue() !== '0') ? cell.getValue() :  DataMethods.toTime(cell.getValue())
+    const nullFormatter = (cell, params) => {
+      return cell.getValue() === 0 ? DataMethods.toTime(cell.getValue()) : cell.getValue()
     };
 
     return [
