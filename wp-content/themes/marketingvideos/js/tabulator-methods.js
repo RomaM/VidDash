@@ -11,7 +11,7 @@ export default window.TabulatorMethods = class {
   static generateColumns(){
 
     const nullFormatter = (cell, params) => {
-      return cell.getValue() === 0 ? DataMethods.toTime(cell.getValue()) : cell.getValue()
+      return cell.getValue() == 0 ? DataMethods.toTime(cell.getValue()) : cell.getValue()
     };
 
     return [
