@@ -8,13 +8,10 @@ export default window.TabulatorMethods = class {
   };
 
   // config table columns
-  static generateColumns(){
+  generateColumns(){
 
     const nullFormatter = (cell) => {
-      const formattedCell = cell.getValue() == 0 ? DataMethods.toTime(cell.getValue()) : cell.getValue();
-      const row = cell.getRow();
-      row.update();
-      return formattedCell;
+      return cell.getValue() === 0 ? DataMethods.toTime(+cell.getValue()) : cell.getValue();
     };
 
     return [
@@ -38,10 +35,10 @@ export default window.TabulatorMethods = class {
         }
       },
       {title:"Active view", field:"avgActiveView", align:"left", width: 120, resizable: false},
-      {title:"Scrolling", field:"avgScrollTime", align:"left", width: 110, resizable: false,
+      {title:"Scrolling", field:"avgScrollTime", align:"left", width: 110, resizable: false, sorter: 'string',
         formatter: cell => nullFormatter(cell)
       },
-      {title:"Converted", field:"avgConvertedTime", align:"left", width: 110, resizable: false,
+      {title:"Converted", field:"avgConvertedTime", align:"left", width: 110, resizable: false, sorter: 'string',
         formatter: cell => nullFormatter(cell)
       },
       {title:"Avg. aband.", field:"avgAbandonmentTime", width: 120, resizable: false},
@@ -53,7 +50,7 @@ export default window.TabulatorMethods = class {
       data: this.pagesData,
       layout: 'fitColumns',
       layoutColumnsOnNewData:true,
-      columns: TabulatorMethods.generateColumns()
+      columns: this.generateColumns()
     }
   }
 
