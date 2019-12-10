@@ -20,8 +20,7 @@ window.GeneralStatistics = class {
     }
 
     Object.keys(this.rawData).map((obj, i) => {
-      const pageInstance = new PageStatistics(obj, this.rawData[obj]);;
-
+      const pageInstance = new PageStatistics(obj, this.rawData[obj]);
       this.pagesTableData[i] = pageInstance.generalData(['31.12.2018', '31.12.2222']);
     });
     return true;
@@ -58,10 +57,11 @@ window.GeneralStatistics = class {
 
     DataMethods.logger(this.pagesMostViewedData, 'obj');
 
-    const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
+
     const customCharts = new ChartMethods(this.pagesMostViewedData, '#view-chart');
     const pieMethods = new PieMethods(this.pagesTableData, 'progress-stopped', 'progress-failed');
     const mapMethods = new MapMethods(this.pagesTableData, 'map-container');
+    const tabulator = new TabulatorMethods(this.pagesTableData, '#table-wrapper');
 
     tabulator.init();
     customCharts.init();
