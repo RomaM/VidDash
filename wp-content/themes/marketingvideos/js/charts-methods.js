@@ -62,7 +62,7 @@ export default window.ChartMethods = class {
         twoElements.push(e);
       }else if(i === 8){
         fourElements.push(e);
-      }else if(i >= 9){
+      }else if(i === 9){
         elements.push(e);
       }
     });
