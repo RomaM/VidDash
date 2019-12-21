@@ -11,7 +11,7 @@ export default window.ChartMethods = class {
 
     this.pagesData.map((e) => {
       let linkUrl = e.pageLink.split('/')[e.pageLink.split('/').length - 1];
-
+      console.log('DATA restr', this.dataRestruct(e));
       wrapElement.insertAdjacentHTML('beforeend', `
         <div>
           <div class="charts__views-block">
@@ -36,13 +36,14 @@ export default window.ChartMethods = class {
     wrapper.appendChild(wrapElement);
   }
 
+  //TODO: refactor
   dataRestruct(data){
     const structuredArray = [];
     const elements = [];
     const twoElements = [];
-    const fourElements = [];
+    const fourElements = []; 
 
-    data.pageDataArr.map((e, i) => {
+    /**data.pageDataArr.map((e, i) => {
       if(i < 3){
         structuredArray.push(e)
       }else if(i === 3 || i === 4){
@@ -52,11 +53,31 @@ export default window.ChartMethods = class {
       }else if(i >= 9){
         elements.push(e);
       }
+    });*/
+
+    data.pageDataArr.map((e, i) => {
+      if(i < 3){
+        structuredArray.push(e)
+      }else if(i === 4){
+        twoElements.push(e);
+      }else if(i === 8){
+        fourElements.push(e);
+      }else if(i === 9){
+        elements.push(e);
+      }
     });
+
+    console.log('STRUC ARR', structuredArray);
+    console.log('ELEMENTS', elements);
+    console.log('TWO ELEMENTS', twoElements);
+
 
     structuredArray.push(this.objectSum(twoElements));
     structuredArray.push(this.objectSum(fourElements));
     structuredArray.push(this.objectSum(elements));
+
+
+    console.log('STRUC ARR AFTER', structuredArray);
     return structuredArray;
   }
 
