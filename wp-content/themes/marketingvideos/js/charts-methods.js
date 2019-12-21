@@ -41,8 +41,7 @@ export default window.ChartMethods = class {
     const structuredArray = [];
     const elements = [];
     const twoElements = [];
-    const fourElements = []; 
-
+    const fourElements = [];
     /**data.pageDataArr.map((e, i) => {
       if(i < 3){
         structuredArray.push(e)
