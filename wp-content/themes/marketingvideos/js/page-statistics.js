@@ -141,7 +141,7 @@ export default window.PageStatistics = class {
 
         this.detailedInfo.intervalData = Array(intervals);
 
-        for(let i=0; i<=intervals; i++) {
+        for(let i=0; i <= intervals; i++) {
           this.detailedInfo.intervalData[i] = {viewers: 0, abandonment: 0, converted: 0};
         }
 
