@@ -1,6 +1,12 @@
-wp-content/plugins/
-wp-content/themes/
-!wp-content/themes/marketingvideos/
+# ignore everything in the root except the "wp-content" directory.
+!wp-content/
+
+# ignore everything in the "wp-content" directory, except:
+# "plugins" directory
+# "themes" directory
+!/wp-content/upgrade/
+!/wp-content/updraft/
+!/wp-content/index.php
 
 # config files
 /wp-config.php
