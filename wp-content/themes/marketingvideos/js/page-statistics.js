@@ -138,9 +138,10 @@ export default window.PageStatistics = class {
         this.detailedInfo.vDuration = DataMethods.toTime(rawData[obj]);
         // Creating array of intervals for the Video by 5 second steps
         let intervals = Math.ceil(+rawData[obj] * .2);
+
         this.detailedInfo.intervalData = Array(intervals);
 
-        for(let i=0; i<intervals; i++) {
+        for(let i=0; i<=intervals; i++) {
           this.detailedInfo.intervalData[i] = {viewers: 0, abandonment: 0, converted: 0};
         }
 
