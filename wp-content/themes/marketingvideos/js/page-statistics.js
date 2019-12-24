@@ -127,6 +127,7 @@ export default window.PageStatistics = class {
     let localProcessedData = {};
     let processedEvents = {};
     let timeArrs = {};
+    let vDurationSec;
 
     /* Get static info about a page */
     let data = this.videoPageInfo.split('|');
@@ -135,6 +136,7 @@ export default window.PageStatistics = class {
     Object.keys(rawData).map(obj => {
 
       if (obj == 'duration' && this.detailedInfo.vDuration == 0) {
+        vDurationSec = rawData[obj];
         this.detailedInfo.vDuration = DataMethods.toTime(rawData[obj]);
         // Creating array of intervals for the Video by 5 second steps
         let intervals = Math.ceil(+rawData[obj] * .2);
@@ -209,9 +211,9 @@ export default window.PageStatistics = class {
                 timeArrs.watchTimeArr.push(processedEvents.watchTime);
 
                 // Setting data of Viewers/Abandonment/Converted for video by 5 second intervals
-                let intervalViewers = Math.round(processedEvents.watchTime / 5);
+                let intervalViewers = Math.floor(processedEvents.watchTime / 5);
 
-                for(let i = 0; i < intervalViewers; i++) this.detailedInfo.intervalData[i].viewers++;
+                for(let i = 0; i <= intervalViewers; i++) this.detailedInfo.intervalData[i].viewers++;
 
                 if (processedEvents.abandonment && processedEvents.watchTime > 0)
                   this.detailedInfo.intervalData[intervalViewers].abandonment++;
