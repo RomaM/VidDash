@@ -209,15 +209,18 @@ export default window.PageStatistics = class {
                 timeArrs.watchTimeArr.push(processedEvents.watchTime);
 
                 // Setting data of Viewers/Abandonment/Converted for video by 5 second intervals
-                let intervalViewers = Math.ceil(processedEvents.watchTime / 5);
+                let intervalViewers = Math.round(processedEvents.watchTime / 5);
 
                 for(let i = 0; i < intervalViewers; i++) this.detailedInfo.intervalData[i].viewers++;
 
                 if (processedEvents.abandonment && processedEvents.watchTime > 0)
                   this.detailedInfo.intervalData[intervalViewers].abandonment++;
 
-                if (processedEvents.converted[0] && processedEvents.watchTime > 0)
-                  this.detailedInfo.intervalData[intervalViewers].converted++;
+                if (processedEvents.converted[0] && processedEvents.watchTime > 0) {
+                  const convInterval = Math.floor(processedEvents.converted[1] / 5);
+                  this.detailedInfo.intervalData[convInterval].converted++;
+                }
+
               }
             });
 

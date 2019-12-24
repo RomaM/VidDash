@@ -11,7 +11,6 @@ export default window.ChartMethods = class {
 
     this.pagesData.map((e) => {
       let linkUrl = e.pageLink.split('/')[e.pageLink.split('/').length - 1];
-      console.log('DATA restr', this.dataRestruct(e));
       wrapElement.insertAdjacentHTML('beforeend', `
         <div>
           <div class="charts__views-block">
@@ -66,17 +65,10 @@ export default window.ChartMethods = class {
       }
     });
 
-    console.log('STRUC ARR', structuredArray);
-    console.log('ELEMENTS', elements);
-    console.log('TWO ELEMENTS', twoElements);
-
-
     structuredArray.push(this.objectSum(twoElements));
     structuredArray.push(this.objectSum(fourElements));
     structuredArray.push(this.objectSum(elements));
 
-
-    console.log('STRUC ARR AFTER', structuredArray);
     return structuredArray;
   }
 
